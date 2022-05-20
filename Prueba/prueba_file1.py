@@ -1,38 +1,57 @@
 from tkinter import *
 from tkinter import ttk
+import time
+import os.path
+import os
+from PIL import ImageTk, Image
+import prueba_file2
 
-def calculate(*pedro):
-    try:
-        value = float(feet.get())
-        meters.set(int(0.3048 * value * 10000.0 + 0.5)/10000.0)
-    except ValueError:
-        pass
+def split(*args):
+    ExitText.set(" ".join(str(InitText.get())))
+    print(ExitText.get())
+
+def GenerarGrafo(*args):
+
+    if os.path.exists(r"C:\Users\garga\Desktop\python\TR-Grafs\Prueba\figure.jpg"):
+        os.remove(r"C:\Users\garga\Desktop\python\TR-Grafs\Prueba\figure.jpg")
+        print("Imagen borrada")
+    time.sleep(5)
+    prueba_file2.Grafo()
+    Img = ImageTk.PhotoImage(Image.open(r"C:\Users\garga\Desktop\python\TR-Grafs\Prueba\figure.jpg"))
+    print("Imagen puesta")
+
 
 root = Tk()
-root.title("Feet to Meters")
+root.title("Splitter")
+root.geometry('660x750')
+#root.resizable(0, 0)
 
-mainframe = ttk.Frame(root, padding="3 3 12 12")
-mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
-root.columnconfigure(0, weight=1)
-root.rowconfigure(0, weight=1)
+mainframe = ttk.Frame(root)
+mainframe.grid(column = 0, row = 0, sticky = (N, W, E, S))
+mainframe.columnconfigure(0, weight=2)
+mainframe.rowconfigure(0, weight=2)
 
-feet = StringVar()
-feet_entry = ttk.Entry(mainframe, width=7, textvariable=feet)
-feet_entry.grid(column=2, row=1, sticky=(W, E))
+InitText = StringVar()
+ExitText = StringVar()
 
-meters = StringVar()
-ttk.Label(mainframe, textvariable=meters).grid(column=2, row=2, sticky=(W, E))
+MainEntry = ttk.Entry(mainframe, textvariable=InitText, width = 15)
+MainEntry.grid(column = 1, row = 0, padx = 20, pady = 20)
 
-ttk.Button(mainframe, text="Calculate", command=calculate).grid(column=3, row=3, sticky=W)
+SplitButton = ttk.Button(mainframe, text = "Split!", command = split)
 
-ttk.Label(mainframe, text="feet").grid(column=3, row=1, sticky=W)
-ttk.Label(mainframe, text="is equivalent to").grid(column=1, row=2, sticky=E)
-ttk.Label(mainframe, text="meters").grid(column=3, row=2, sticky=W)
+SplitButton.grid(column = 1, row = 1)
 
-for child in mainframe.winfo_children():
-    child.grid_configure(padx=5, pady=5)
+ExitLabel = ttk.Label(mainframe, textvariable=ExitText, background = 'White', width = -15, relief = "ridge")
+ExitLabel.grid(column = 1, row = 2, padx = 20, pady = 20)
 
-feet_entry.focus()
-root.bind("<Return>", calculate)
+Img = ImageTk.PhotoImage(Image.open(r"C:\Users\garga\Desktop\python\TR-Grafs\Prueba\white.jpg"))
+ImgLabel = ttk.Label(mainframe, image=Img)
+ImgLabel.grid(column=1, row=3, padx=10)
 
+
+#for child in mainframe.winfo_children():
+ #   child.grid_configure(padx=5, pady=5)
+
+root.bind("<Return>", GenerarGrafo)
+MainEntry.focus()
 root.mainloop()

@@ -1,13 +1,13 @@
-import x
+from tkinter import *
+from tkinter import ttk
 
-num1 = int(input("Di un numero: "))
-num2 = int(input("Di otro numero: "))
+root = Tk()
+root.geometry("500x500")
 
-Op = input("Que quieres hacer: ")
+mainframe = ttk.Frame(root, padding = 5, borderwidth = 100, relief = "ridge")
+mainframe.grid()
 
-if Op == "sumar" or Op == "Sumar" or Op == "SUMAR":
-    import prueba_file1
-elif Op == "restar" or Op == "Restar" or Op == "RESTAR":
-    import prueba_file2
-else:
-    print("Hijoputa")
+root.minsize(500, 500)
+root.maxsize(500, 500)
+
+root.mainloop()
