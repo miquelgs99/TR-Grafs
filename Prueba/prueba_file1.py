@@ -3,6 +3,8 @@ from tkinter import ttk
 import time
 import os.path
 import os
+
+import matplotlib.pyplot as plt
 from PIL import ImageTk, Image
 import prueba_file2
 
@@ -11,13 +13,8 @@ def split(*args):
     print(ExitText.get())
 
 def GenerarGrafo(*args):
-
-    if os.path.exists(r"C:\Users\garga\Desktop\python\TR-Grafs\Prueba\figure.jpg"):
-        os.remove(r"C:\Users\garga\Desktop\python\TR-Grafs\Prueba\figure.jpg")
-        print("Imagen borrada")
-    time.sleep(5)
+    plt.cla()
     prueba_file2.Grafo()
-    Img = ImageTk.PhotoImage(Image.open(r"C:\Users\garga\Desktop\python\TR-Grafs\Prueba\figure.jpg"))
     print("Imagen puesta")
 
 
@@ -44,7 +41,11 @@ SplitButton.grid(column = 1, row = 1)
 ExitLabel = ttk.Label(mainframe, textvariable=ExitText, background = 'White', width = -15, relief = "ridge")
 ExitLabel.grid(column = 1, row = 2, padx = 20, pady = 20)
 
-Img = ImageTk.PhotoImage(Image.open(r"C:\Users\garga\Desktop\python\TR-Grafs\Prueba\white.jpg"))
+# Creem la direcció de la imatge que guardarem sempre a la carpeta de imatges situada en la carpeta pare de l'actual.
+
+my_file = "white.jpg"
+image_path = os.path.join(os.path.join(os.path.pardir,prueba_file2.PATH_IMAGES), my_file)
+Img = ImageTk.PhotoImage(Image.open(image_path))
 ImgLabel = ttk.Label(mainframe, image=Img)
 ImgLabel.grid(column=1, row=3, padx=10)
 
