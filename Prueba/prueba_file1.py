@@ -3,7 +3,6 @@ from tkinter import ttk
 import time
 import os.path
 import os
-
 import matplotlib.pyplot as plt
 from PIL import ImageTk, Image
 import prueba_file2
