@@ -24,6 +24,6 @@ def Grafo(*args):
 
     plt.savefig(os.path.join(my_path, my_file))
     print("Imagen creada")
-    plt.show(block = False)
+    #plt.show(block = False)
 
 
