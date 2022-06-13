@@ -131,3 +131,7 @@ dmypy.json
 # JPEG
 *.jpg
 *.jpeg
+
+# file: ~/.gitignore_global
+.DS_Store
+.idea
