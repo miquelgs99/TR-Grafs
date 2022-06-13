@@ -3,17 +3,16 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import os
+from tkinter import *
+from tkinter import ttk
 PATH_IMAGES= "images"
 
 def Grafo(*args):
 
-    G = nx.Graph()
-    G.clear()
-
-    for i in range(np.random.randint(10, 20)):
-        G.add_node(i)
-        for j in range(np.random.randint(0, 5)):
-            G.add_edge(i, np.random.randint(-20, 20))
+    MSize = 10
+    matrix = np.random.randint(2, size=(MSize, MSize))
+    print(matrix)
+    G=nx.from_numpy_matrix(matrix)
 
     nx.draw_random(G)
 
