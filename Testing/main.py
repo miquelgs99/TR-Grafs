@@ -7,18 +7,12 @@ import matplotlib.pyplot as plt
 from PIL import ImageTk, Image
 import graph_generator
 
-def split(*args):
-    ExitText.set(" ".join(str(InitText.get())))
-    print(ExitText.get())
-
 def GenerarGrafo(*args):
     plt.cla()
-    graph_generator.Grafo()
-    print("Imagen puesta")
-
+    graph_generator.grafo()
 
 root = Tk()
-root.title("Splitter")
+root.title("TR-Grafs")
 root.geometry('660x750')
 #root.resizable(0, 0)
 
@@ -27,22 +21,17 @@ mainframe.grid(column = 0, row = 0, sticky = (N, W, E, S))
 mainframe.columnconfigure(0, weight=2)
 mainframe.rowconfigure(0, weight=2)
 
-InitText = StringVar()
-ExitText = StringVar()
+NumOfV = StringVar()
 
-MainEntry = ttk.Entry(mainframe, textvariable=InitText, width = 15)
+MainEntry = ttk.Entry(mainframe, textvariable=NumOfV, width = 15)
 MainEntry.grid(column = 1, row = 0, padx = 20, pady = 20)
 
-SplitButton = ttk.Button(mainframe, text = "Split!", command = split)
-
-SplitButton.grid(column = 1, row = 1)
-
-ExitLabel = ttk.Label(mainframe, textvariable=ExitText, background = 'White', width = -15, relief = "ridge")
-ExitLabel.grid(column = 1, row = 2, padx = 20, pady = 20)
+GenerateButton = ttk.Button(mainframe, text="Generate!", command=GenerarGrafo)
+GenerateButton.grid(column = 1, row = 1)
 
 # Creem la direcció de la imatge que guardarem sempre a la carpeta de imatges situada en la carpeta pare de l'actual.
 
-my_file = "white.jpg"
+my_file = "figure.jpg"
 image_path = os.path.join(os.path.join(os.path.pardir,graph_generator.PATH_IMAGES), my_file)
 Img = ImageTk.PhotoImage(Image.open(image_path))
 ImgLabel = ttk.Label(mainframe, image=Img)
@@ -55,4 +44,3 @@ ImgLabel.grid(column=1, row=3, padx=10)
 root.bind("<Return>", GenerarGrafo)
 MainEntry.focus()
 root.mainloop()
-print("Hola que tal")
