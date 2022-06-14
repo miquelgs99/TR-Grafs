@@ -12,9 +12,7 @@ def Grafo(*args):
     MSize = 10
     matrix = np.random.randint(2, size=(MSize, MSize))
     for i in range(len(matrix)):
-        for j in range(len(matrix[i])):
-            if i == j:
-                matrix[i][j] = 0
+        matrix[i][i] = 0
     G=nx.from_numpy_matrix(matrix)
 
     nx.draw_random(G)
