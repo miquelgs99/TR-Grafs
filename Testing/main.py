@@ -11,7 +11,6 @@ import numpy as np
 from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg, NavigationToolbar2Tk)
 
-
 def hilighter(event):
     # if we did not hit a node, bail
     if not hasattr(event, 'nodes') or not event.nodes:
@@ -38,10 +37,10 @@ def hilighter(event):
     event.artist.figure.canvas.draw_idle()
 
 
-def GenerarGrafo(mainframe, num_vertex, *args):
+def GenerarGrafo(mainframe, *args):
 
-    if num_vertex != '':
-        size = int(num_vertex)
+    if MainEntry.get() != '':
+        size = int(MainEntry.get())
     else:
         size = 10
     
@@ -65,6 +64,7 @@ def GenerarGrafo(mainframe, num_vertex, *args):
     canvas.get_tk_widget().grid(column=0, row=1)
 
 
+
 root = Tk()
 root.title("TR-Grafs")
 root.geometry('660x750')
@@ -79,11 +79,16 @@ num_vertex = StringVar()
 MainEntry = ttk.Entry(mainframe, textvariable=num_vertex, width=15)
 MainEntry.grid(column=1, row=0, padx=20, pady=20)
 
-action_with_arg = partial(GenerarGrafo, root, num_vertex.get())
+action_with_arg = partial(GenerarGrafo, root)
 
 GenerateButton = ttk.Button(mainframe, text="Generate!", command=action_with_arg)
 GenerateButton.grid(column=1, row=1)
 
+QuitButton = ttk.Button(mainframe, text="Quit!", command=exit)
+QuitButton.grid(column=1, row=2)
+
 root.bind("<Return>", action_with_arg)
 MainEntry.focus()
 root.mainloop()
+
+
