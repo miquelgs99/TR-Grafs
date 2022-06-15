@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import messagebox
 from tkinter import ttk
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -6,8 +7,6 @@ from functools import partial
 from grave.style import use_attributes
 from grave import plot_network
 import numpy as np
-
-
 from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg, NavigationToolbar2Tk)
 
@@ -37,13 +36,13 @@ def hilighter(event):
     event.artist.figure.canvas.draw_idle()
 
 
-def GenerarGrafo(mainframe, *args):
+def show_graph(frame, *args):
 
-    if MainEntry.get() != '':
-        size = int(MainEntry.get())
-    else:
-        size = 10
-    
+    try:
+        size = int(vertex_entry.get())
+    except:
+        messagebox.showinfo(title="Error", message="Enter a valid number!")
+
     matrix = np.random.randint(2, size=(size, size))
     for i in range(len(matrix)):
         matrix[i][i] = 0
@@ -59,10 +58,9 @@ def GenerarGrafo(mainframe, *args):
     ax.set_title('Click on the nodes!')
     fig.canvas.mpl_connect('pick_event', hilighter)
 
-    canvas = FigureCanvasTkAgg(fig, master=mainframe)  # A tk.DrawingArea.
+    canvas = FigureCanvasTkAgg(fig, master=frame)  # A tk.DrawingArea.
     canvas.draw()
     canvas.get_tk_widget().grid(column=0, row=1)
-
 
 
 root = Tk()
@@ -74,21 +72,19 @@ mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
 mainframe.columnconfigure(0, weight=2)
 mainframe.rowconfigure(0, weight=2)
 
-num_vertex = StringVar()
+vertex_entry = ttk.Entry(mainframe, width=15)
+vertex_entry.grid(column=1, row=0, padx=20, pady=20)
 
-MainEntry = ttk.Entry(mainframe, textvariable=num_vertex, width=15)
-MainEntry.grid(column=1, row=0, padx=20, pady=20)
+show_graph_with_arg = partial(show_graph, root)
 
-action_with_arg = partial(GenerarGrafo, root)
-
-GenerateButton = ttk.Button(mainframe, text="Generate!", command=action_with_arg)
-GenerateButton.grid(column=1, row=1)
+generate_button = ttk.Button(mainframe, text="Generate!", command=show_graph_with_arg)
+generate_button.grid(column=1, row=1)
 
 QuitButton = ttk.Button(mainframe, text="Quit!", command=exit)
 QuitButton.grid(column=1, row=2)
 
-root.bind("<Return>", action_with_arg)
-MainEntry.focus()
+root.bind("<Return>", show_graph_with_arg)
+vertex_entry.focus()
 root.mainloop()
 
 
