@@ -38,8 +38,13 @@ def hilighter(event):
     event.artist.figure.canvas.draw_idle()
 
 
-def GenerarGrafo(mainframe, *args):
-    size = 10
+def GenerarGrafo(mainframe, num_vertex, *args):
+
+    if num_vertex != '':
+        size = int(num_vertex)
+    else:
+        size = 10
+    
     matrix = np.random.randint(2, size=(size, size))
     for i in range(len(matrix)):
         matrix[i][i] = 0
@@ -74,7 +79,7 @@ num_vertex = StringVar()
 MainEntry = ttk.Entry(mainframe, textvariable=num_vertex, width=15)
 MainEntry.grid(column=1, row=0, padx=20, pady=20)
 
-action_with_arg = partial(GenerarGrafo, root)
+action_with_arg = partial(GenerarGrafo, root, num_vertex.get())
 
 GenerateButton = ttk.Button(mainframe, text="Generate!", command=action_with_arg)
 GenerateButton.grid(column=1, row=1)
