@@ -1,20 +1,12 @@
 from tkinter import *
 from tkinter import ttk
-import time
-import os.path
-import os
 import networkx as nx
 import matplotlib.pyplot as plt
-from PIL import ImageTk, Image
-import graph_generator
 from functools import partial
-
 from grave.style import use_attributes
-
 from grave import plot_network
 import numpy as np
 
-import tkinter
 
 from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg, NavigationToolbar2Tk)
@@ -67,14 +59,10 @@ def GenerarGrafo(mainframe, *args):
     canvas.draw()
     canvas.get_tk_widget().grid(column=0, row=1)
 
-    # plt.cla()
-    # graph_generator.grafo()
-
 
 root = Tk()
 root.title("TR-Grafs")
 root.geometry('660x750')
-# root.resizable(0, 0)
 
 mainframe = ttk.Frame(root)
 mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
@@ -90,18 +78,6 @@ action_with_arg = partial(GenerarGrafo, root)
 
 GenerateButton = ttk.Button(mainframe, text="Generate!", command=action_with_arg)
 GenerateButton.grid(column=1, row=1)
-
-# Creem la direcció de la imatge que guardarem sempre a la carpeta de imatges situada en la carpeta pare de l'actual.
-
-# my_file = "figure.jpg"
-# image_path = os.path.join(os.path.join(os.path.pardir,graph_generator.PATH_IMAGES), my_file)
-# Img = ImageTk.PhotoImage(Image.open(image_path))
-# ImgLabel = ttk.Label(mainframe, image=Img)
-# ImgLabel.grid(column=1, row=3, padx=10)
-
-
-# for child in mainframe.winfo_children():
-#   child.grid_configure(padx=5, pady=5)
 
 root.bind("<Return>", action_with_arg)
 MainEntry.focus()
