@@ -47,7 +47,7 @@ def show_graph(frame, *args):
     for i in range(len(matrix)):
         for j in range(len(matrix[i])):
             if matrix[i][j] != matrix[j][i]:
-                matrix [i][j] = matrix[j][i]
+                matrix[i][j] = matrix[j][i]
         matrix[i][i] = 0
     graph = nx.from_numpy_matrix(matrix)
     print(graph.number_of_edges())
@@ -63,28 +63,34 @@ def show_graph(frame, *args):
 
     canvas = FigureCanvasTkAgg(fig, master=frame)  # A tk.DrawingArea.
     canvas.draw()
-    canvas.get_tk_widget().grid(column=0, row=1)
+    canvas.get_tk_widget().grid(column=0, row=1, sticky=(N, W, E, S), padx=20)
 
 
 root = Tk()
 root.title("TR-Grafs")
-root.geometry('660x750')
+root.geometry('1280x720')
+root.columnconfigure(0, weight=2)
+root.rowconfigure(0, weight=2)
 
 mainframe = ttk.Frame(root)
-mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
-mainframe.columnconfigure(0, weight=2)
-mainframe.rowconfigure(0, weight=2)
+mainframe.grid(column=0, row=0, sticky=W)
+
+plot_frame = ttk.Frame(root)
+plot_frame.grid(column=0, row=0, sticky=E)
+
+vertex_label = ttk.Label(mainframe, text="Introduce the number of vertex that you want: ")
+vertex_label.grid(column=0, row=0, padx=20, pady=20)
 
 vertex_entry = ttk.Entry(mainframe, width=15)
-vertex_entry.grid(column=1, row=0, padx=20, pady=20)
+vertex_entry.grid(column=1, row=0, padx=0, pady=20)
 
-show_graph_with_arg = partial(show_graph, root)
+show_graph_with_arg = partial(show_graph, plot_frame)
 
 generate_button = ttk.Button(mainframe, text="Generate!", command=show_graph_with_arg)
 generate_button.grid(column=1, row=1)
 
-QuitButton = ttk.Button(mainframe, text="Quit!", command=exit)
-QuitButton.grid(column=1, row=2)
+quit_button = ttk.Button(mainframe, text="Quit!", command=exit)
+quit_button.grid(column=1, row=2, pady=10)
 
 root.bind("<Return>", show_graph_with_arg)
 vertex_entry.focus()
