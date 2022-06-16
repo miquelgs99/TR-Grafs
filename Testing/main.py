@@ -10,6 +10,7 @@ import numpy as np
 from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg, NavigationToolbar2Tk)
 
+
 def hilighter(event):
     # if we did not hit a node, bail
     if not hasattr(event, 'nodes') or not event.nodes:
@@ -36,11 +37,16 @@ def hilighter(event):
     event.artist.figure.canvas.draw_idle()
 
 
+def random_number(value):
+    value.delete(0, END)  # deletes the current value
+    value.insert(0, np.random.randint(20))  # inserts new value assigned by 2nd parameter
+
+
 def show_graph(frame, *args):
 
     try:
         size = int(vertex_entry.get())
-    except:
+    except ValueError:
         messagebox.showinfo(title="Error", message="Enter a valid number!")
 
     matrix = np.random.randint(2, size=(size, size))
@@ -81,7 +87,9 @@ plot_frame.grid(column=0, row=0, sticky=E)
 vertex_label = ttk.Label(mainframe, text="Introduce the number of vertex that you want: ")
 vertex_label.grid(column=0, row=0, padx=20, pady=20)
 
-vertex_entry = ttk.Entry(mainframe, width=15)
+vertex_variable = StringVar()
+
+vertex_entry = ttk.Entry(mainframe, width=15, textvariable=vertex_variable)
 vertex_entry.grid(column=1, row=0, padx=0, pady=20)
 
 show_graph_with_arg = partial(show_graph, plot_frame)
@@ -89,8 +97,13 @@ show_graph_with_arg = partial(show_graph, plot_frame)
 generate_button = ttk.Button(mainframe, text="Generate!", command=show_graph_with_arg)
 generate_button.grid(column=1, row=1)
 
+random_number_with_arg = partial(random_number, vertex_entry)
+
+random_button = ttk.Button(mainframe, text="Random number!", command=random_number_with_arg)
+random_button.grid(column=1, row=2)
+
 quit_button = ttk.Button(mainframe, text="Quit!", command=exit)
-quit_button.grid(column=1, row=2, pady=10)
+quit_button.grid(column=1, row=3, pady=10)
 
 root.bind("<Return>", show_graph_with_arg)
 vertex_entry.focus()
