@@ -47,7 +47,7 @@ def show_graph(frame, *args):
     for i in range(len(matrix)):
         for j in range(len(matrix[i])):
             if matrix[i][j] != matrix[j][i]:
-                matrix [i][j] = matrix[j][i]
+                matrix[i][j] = matrix[j][i]
         matrix[i][i] = 0
     graph = nx.from_numpy_matrix(matrix)
     print(graph.number_of_edges())
