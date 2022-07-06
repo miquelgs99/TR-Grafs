@@ -77,7 +77,7 @@ def show_graph(frame, *args):
     ax.set_title('Click on the nodes!')
     fig.canvas.mpl_connect('pick_event', hilighter)
 
-    # We create a canvas with the figure and we put it in the GUI
+    # We create a canvas with the figure, and we put it in the GUI
     canvas = FigureCanvasTkAgg(fig, master=frame)  # A tk.DrawingArea.
     canvas.draw()
     canvas.get_tk_widget().grid(column=0, row=1, sticky=(N, W, E, S), padx=20)
