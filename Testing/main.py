@@ -9,6 +9,7 @@ from grave import plot_network
 import numpy as np
 from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg, NavigationToolbar2Tk)
+import pprint
 
 
 # Defining the function that highlights the nodes
@@ -23,6 +24,7 @@ def hilighter(event):
     # clear any non-default color on nodes
     for node, attributes in graph.nodes.data():
         attributes.pop('color', None)
+
 
     for u, v, attributes in graph.edges.data():
         attributes.pop('width', None)
@@ -63,16 +65,25 @@ def show_graph(frame, *args):
                 matrix[i][j] = matrix[j][i]
         matrix[i][i] = 0
 
+    matrix[0][2]=0
     # We create the graph and we draw it randomly
-    graph = nx.from_numpy_matrix(matrix)
-    nx.draw_random(graph)
+    graph = nx.from_numpy_matrix(matrix, create_using=nx.DiGraph)
+    # pos = nx.draw_random(graph)
 
-    # We create the figures where the graph will be
+    ######### ORIGINAL
+
+    # # We create the figures where the graph will be
     fig, ax = plt.subplots()
-    art = plot_network(graph, ax=ax, node_style=use_attributes(),
+    pprint.pprint(matrix)
+    art = plot_network(graph, layout="shell", ax=ax, node_style=use_attributes(),
                        edge_style=use_attributes())
 
-    # I don't know what this does
+    # Afegim per sobre el graf dirigit de forma no interactiva.
+    pos = nx.shell_layout(graph)
+    nx.draw_networkx_nodes(graph, pos, cmap=plt.get_cmap('jet'))
+    nx.draw_networkx_edges(graph, pos, arrows=True, arrowstyle='-|>')
+
+    # # I don't know what this does
     art.set_picker(10)
     ax.set_title('Click on the nodes!')
     fig.canvas.mpl_connect('pick_event', hilighter)
