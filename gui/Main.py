@@ -1,4 +1,1 @@
-from MyTkWindow import *
-
-myWindow = MyTkWindow()
-myWindow.start()
+from MenuFrame import *
