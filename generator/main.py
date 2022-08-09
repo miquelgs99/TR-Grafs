@@ -13,7 +13,7 @@ import pprint
 
 
 # Defining the function that highlights the nodes
-def hilighter(event):
+def highlighter(event):
     # if we did not hit a node, bail
     if not hasattr(event, 'nodes') or not event.nodes:
         return
@@ -24,7 +24,6 @@ def hilighter(event):
     # clear any non-default color on nodes
     for node, attributes in graph.nodes.data():
         attributes.pop('color', None)
-
 
     for u, v, attributes in graph.edges.data():
         attributes.pop('width', None)
@@ -40,37 +39,35 @@ def hilighter(event):
     event.artist.figure.canvas.draw_idle()
 
 
-# Defining the function that generates a random number in the text entry
-def random_number(value):
-    value.delete(0, END)  # deletes the current value
-    value.insert(0, np.random.randint(20))  # inserts new value assigned by 2nd parameter
-
-
 # Defining the function that will generate and show a graph in the GUI
 def show_graph(frame, *args):
+
     try:
-        # If the text in the entry is an integer, we set the size of the graph to the number entered
-        size = int(vertex_entry.get())
+        if int(vertex_entry.get()) > 0:
+            size = int(vertex_entry.get())
+        else:
+            messagebox.showinfo(title="Error", message="Enter a valid number!")
     except ValueError:
-        # If not, the code detects the error and shows an error messagebox
         messagebox.showinfo(title="Error", message="Enter a valid number!")
 
     # The matrix of the graph is created with randint from numpy
-    matrix = np.random.randint(2, size=(size, size))
+    matrix = np.random.randint(-30, 20, size=(size, size))
 
     # We go through the matrix to make it symmetrical and also eliminate the self-connected edges
     for i in range(len(matrix)):
         for j in range(len(matrix[i])):
             if matrix[i][j] != matrix[j][i]:
                 matrix[i][j] = matrix[j][i]
+
+            if matrix[i][j] < 0:
+                matrix[i][j] = 0
         matrix[i][i] = 0
+    matrix[0][2] = 0
 
-    matrix[0][2]=0
-    # We create the graph and we draw it randomly
-    graph = nx.from_numpy_matrix(matrix, create_using=nx.DiGraph)
-    # pos = nx.draw_random(graph)
+    # We create the graph from the matrix
+    graph = nx.from_numpy_matrix(matrix)
 
-    ######### ORIGINAL
+    # ORIGINAL ------------------
 
     # # We create the figures where the graph will be
     fig, ax = plt.subplots()
@@ -78,15 +75,16 @@ def show_graph(frame, *args):
     art = plot_network(graph, layout="shell", ax=ax, node_style=use_attributes(),
                        edge_style=use_attributes())
 
-    # Afegim per sobre el graf dirigit de forma no interactiva.
+    # Afegim per sobre el graf etiquetat de forma no interactiva.
+    edge_labels = nx.get_edge_attributes(graph, "weight")
     pos = nx.shell_layout(graph)
-    nx.draw_networkx_nodes(graph, pos, cmap=plt.get_cmap('jet'))
-    nx.draw_networkx_edges(graph, pos, arrows=True, arrowstyle='-|>')
+    nx.draw_networkx_edges(graph, pos)
+    nx.draw_networkx_edge_labels(graph, pos, edge_labels)
 
     # # I don't know what this does
     art.set_picker(10)
     ax.set_title('Click on the nodes!')
-    fig.canvas.mpl_connect('pick_event', hilighter)
+    fig.canvas.mpl_connect('pick_event', highlighter)
 
     # We create a canvas with the figure, and we put it in the GUI
     canvas = FigureCanvasTkAgg(fig, master=frame)  # A tk.DrawingArea.
@@ -117,27 +115,22 @@ vertex_label.grid(column=0, row=0, padx=20, pady=20)
 vertex_entry = ttk.Entry(text_frame, width=15)
 vertex_entry.grid(column=1, row=0, padx=0, pady=20)
 
-# We use the partial function to create another function from show_graph that already has the args in
-# We need this because tkinter buttons cannot take args when a standard function to them is assigned
-show_graph_with_arg = partial(show_graph, graph_frame)
-
 # We create the button that will generate the graph, and we assign the previous function made to it
-generate_button = ttk.Button(text_frame, text="Generate!", command=show_graph_with_arg)
+generate_button = ttk.Button(text_frame, text="Generate!", command=lambda: show_graph(graph_frame))
 generate_button.grid(column=1, row=1)
 
-# We do the same with the random_number function that we did before
-random_number_with_arg = partial(random_number, vertex_entry)
-
 # We create the button that will create the random number, and we assign the previous function made to it
-random_button = ttk.Button(text_frame, text="Random number!", command=random_number_with_arg)
+random_button = ttk.Button(text_frame, text="Random number!",
+                           command=lambda: [vertex_entry.delete(0, END),  # deletes the current value
+                                            vertex_entry.insert(0, np.random.randint(3, 20))])  # inserts new value assigned by 2nd parameter
 random_button.grid(column=1, row=2)
-
+# random_number(vertex_entry)
 # We create a button that shut down the program
-quit_button = ttk.Button(text_frame, text="Quit!", command=exit) # The function exit closes the code directly
+quit_button = ttk.Button(text_frame, text="Quit!", command=exit)  # The function exit closes the code directly
 quit_button.grid(column=1, row=3, pady=10)
 
-root.bind("<Return>", show_graph_with_arg)  # We assign the function that generates the graph to the return key
-vertex_entry.focus()                        # We focus the text writing in the text box when initializing the code
+
+vertex_entry.focus()       # We focus the text writing in the text box when initializing the code
 root.mainloop()
 
 
