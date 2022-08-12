@@ -24,9 +24,8 @@ def highlighter(event):
     # clear any non-default color on nodes
     for node, attributes in graph.nodes(data=True):
         if len(node_picker) == 2:
-            attributes.pop('color', None)
-        else:
-            pass
+            if node not in djk_path:
+                attributes.pop('color', None)
 
     for u, v, attributes in graph.edges(data=True):
         if len(node_picker) == 2:
@@ -83,6 +82,7 @@ def show_graph(frame, *args):
     matrix[0][2] = 0
 
     # We create the graph from the matrix
+    global graph
     graph = nx.from_numpy_matrix(matrix)
 
     for node, node_attr in graph.nodes(data=True):
@@ -96,8 +96,12 @@ def show_graph(frame, *args):
     #     pos = nx.random_layout(graph, seed=4583345)
     #     return pos
 
+    gui_graph(frame)
+
+
+def gui_graph(frame):
+
     fig, ax = plt.subplots()
-    pprint.pprint(matrix)
     art = plot_network(graph, layout="shell", ax=ax,
                        node_style=use_attributes(),
                        edge_style=use_attributes(),
@@ -121,6 +125,33 @@ def show_graph(frame, *args):
     canvas = FigureCanvasTkAgg(fig, master=frame)  # A tk.DrawingArea.
     canvas.draw()
     canvas.get_tk_widget().grid(column=0, row=1, sticky=(N, W, E, S), padx=20)
+
+
+def dijkstra(*args):
+
+    global djk_path
+    djk_path = nx.dijkstra_path(graph, source=node_picker[0], target=node_picker[1], weight='weight')
+
+    dijkstra_path = []
+
+    first = True
+    for node in djk_path:
+        if first:
+            first = False
+            pass
+        else:
+            index = djk_path.index(node)
+            dijkstra_path.append((djk_path[index - 1], djk_path[index]))
+        graph.nodes[node]['color'] = 'red'
+
+    # for edge in dijkstra_path:
+    #     graph.edges()
+
+    pos = nx.shell_layout(graph)
+
+    # for nodes in dijkstra_path:
+    #     nx.draw_networkx_nodes(graph, pos, nodelist=nodes, node_color='r')
+    #     nx.draw_networkx_edges(graph, pos, edgelist=[nodes], edge_color='r')
 
 
 # Declaring variables
@@ -171,16 +202,20 @@ vertex_entry.grid(column=1, row=0, padx=0, pady=20)
 generate_button = ttk.Button(text_frame, text="Generate!", command=lambda: show_graph(graph_frame))
 generate_button.grid(column=1, row=1)
 
+# We create the button that will generate the graph, and we assign the previous function made to it
+dijkstra_button = ttk.Button(text_frame, text="Solve!", command=dijkstra)
+dijkstra_button.grid(column=1, row=2)
+
 # We create the button that will create the random number, and we assign the previous function made to it
 random_button = ttk.Button(text_frame, text="Random number!",
                            command=lambda: [vertex_entry.delete(0, END),  # Deletes the current value
                                             vertex_entry.insert(0, np.random.randint(3, 20))  # Inserts new value
                                             ])
-random_button.grid(column=1, row=2)
+random_button.grid(column=1, row=3)
 
 # We create a button that shut down the program
 quit_button = ttk.Button(text_frame, text="Quit!", command=exit)  # The function exit closes the code directly
-quit_button.grid(column=1, row=3, pady=10)
+quit_button.grid(column=1, row=4)
 
 # endregion
 
