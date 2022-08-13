@@ -26,6 +26,10 @@ def highlighter(event):
         if len(node_picker) == 2:
             if node not in djk_path:
                 attributes.pop('color', None)
+            else:
+                pass
+        else:
+            pass
 
     for u, v, attributes in graph.edges(data=True):
         if len(node_picker) == 2:
