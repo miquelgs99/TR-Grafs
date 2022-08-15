@@ -11,9 +11,42 @@ from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg, NavigationToolbar2Tk)
 import pprint
 
+solve = 0           # It will be set to 1 if we want to solve the path between nodes
+edges_path = []
+
+
+# Per solucionar errors ens aniria molt bé poder fer que les actualitzacions de color i gruix dels nodes i arestes
+# estiguessin fora de la funció highlighter, perquè el que passa es que només es pinta el camí quan cliques a un node.
+# Hauria d'intentar que tot el que tinc ara a highlighter estigués a una funció dijkstra que s'estigués executant tota
+# l'estona o algo així, o que el jeroni si sap faci alguna forma per actualitzar el widget tota l'estona (sense funció)
 
 # Defining the function that highlights the nodes
 def highlighter(event):
+
+    global edges_path
+    global solve
+    global djk_path
+    global graph
+    if solve == 1:      # Check if we want to solve the path
+        solve = 0
+        djk_path = nx.dijkstra_path(graph, source=node_picker[0], target=node_picker[1], weight='weight')
+
+        first = True
+        for node in djk_path:
+            if first:
+                first = False
+                pass
+            else:
+                index = djk_path.index(node)
+                edges_path.append((djk_path[index - 1], djk_path[index]))
+            graph.nodes[node]['color'] = 'red'
+            for edge_attribute in graph[node].values():
+                edge_attribute['width'] = 3
+
+        event.artist.stale = True
+        event.artist.figure.canvas.draw_idle()
+
+
     # if we did not hit a node, bail
     if not hasattr(event, 'nodes') or not event.nodes:
         return
@@ -32,7 +65,8 @@ def highlighter(event):
             pass
 
     for u, v, attributes in graph.edges(data=True):
-        if len(node_picker) == 2:
+        possible_edges = [(u, v), (v, u)]
+        if possible_edges[0] not in edges_path and possible_edges[1] not in edges_path:
             attributes.pop('width', None)
         else:
             pass
@@ -50,8 +84,6 @@ def highlighter(event):
 
     for node in event.nodes:
         graph.nodes[node]['color'] = 'red'
-        # for edge_attribute in graph[node].values():
-        #     edge_attribute['width'] = 3
 
     picked_nodes.set(str(node_picker))
 
@@ -63,6 +95,7 @@ def highlighter(event):
 # Defining the function that will generate and show a graph in the GUI
 def show_graph(frame, *args):
 
+    # canvas.get_tk_widget().delete("all")
     try:
         if int(vertex_entry.get()) > 0:
             size = int(vertex_entry.get())
@@ -96,16 +129,6 @@ def show_graph(frame, *args):
 
     # # We create the figures where the graph will be
 
-    # def create_random_layout(*args):
-    #     pos = nx.random_layout(graph, seed=4583345)
-    #     return pos
-
-    gui_graph(frame)
-
-
-def gui_graph(frame):
-
-    fig, ax = plt.subplots()
     art = plot_network(graph, layout="shell", ax=ax,
                        node_style=use_attributes(),
                        edge_style=use_attributes(),
@@ -125,41 +148,29 @@ def gui_graph(frame):
     ax.set_title('Click on the nodes!')
     fig.canvas.mpl_connect('pick_event', highlighter)
 
-    # We create a canvas with the figure, and we put it in the GUI
-    canvas = FigureCanvasTkAgg(fig, master=frame)  # A tk.DrawingArea.
     canvas.draw()
-    canvas.get_tk_widget().grid(column=0, row=1, sticky=(N, W, E, S), padx=20)
+    # We create a canvas with the figure, and we put it in the GUI
 
 
 def dijkstra(*args):
 
-    global djk_path
-    djk_path = nx.dijkstra_path(graph, source=node_picker[0], target=node_picker[1], weight='weight')
-
-    dijkstra_path = []
-
-    first = True
-    for node in djk_path:
-        if first:
-            first = False
-            pass
-        else:
-            index = djk_path.index(node)
-            dijkstra_path.append((djk_path[index - 1], djk_path[index]))
-        graph.nodes[node]['color'] = 'red'
-
-    # for edge in dijkstra_path:
-    #     graph.edges()
-
-    pos = nx.shell_layout(graph)
-
-    # for nodes in dijkstra_path:
-    #     nx.draw_networkx_nodes(graph, pos, nodelist=nodes, node_color='r')
-    #     nx.draw_networkx_edges(graph, pos, edgelist=[nodes], edge_color='r')
+    global solve
+    solve = True
+    # node_picker = []
+    # djk_path = nx.dijkstra_path(graph, source=node_picker[0], target=node_picker[1], weight='weight')
+    #
+    # for node in djk_path:
+    #     graph.nodes[node]['color'] = 'red'
+    #     for edge_attribute in graph[node].values():
+    #         edge_attribute['width'] = 3
+    #
+    # canvas.draw()
 
 
 # Declaring variables
 node_picker = []
+djk_path = []
+
 
 # region We create the main window, and we define some characteristics
 root = Tk()
@@ -178,6 +189,12 @@ text_frame.grid(column=0, row=0, sticky=W)
 graph_frame = ttk.Frame(root)
 graph_frame.grid(column=0, row=0, sticky=E)
 # endregion
+
+fig, ax = plt.subplots()
+plt.axis('off')
+canvas = FigureCanvasTkAgg(fig, master=graph_frame)  # A tk.DrawingArea.
+canvas.draw()
+canvas.get_tk_widget().grid(column=0, row=1, sticky=(N, W, E, S), padx=20)
 
 # region Creating the labels
 
