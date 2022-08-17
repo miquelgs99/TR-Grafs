@@ -3,15 +3,11 @@ from tkinter import messagebox
 from tkinter import ttk
 import networkx as nx
 import matplotlib.pyplot as plt
-from functools import partial                                 # Import libraries
 from grave.style import use_attributes
 from grave import plot_network
 import numpy as np
-from matplotlib.backends.backend_tkagg import (
-    FigureCanvasTkAgg, NavigationToolbar2Tk)
-import pprint
-from matplotlib.artist import Artist
-import matplotlib
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+
 
 solve = 0           # It will be set to 1 if we want to solve the path between nodes
 edges_path = []
