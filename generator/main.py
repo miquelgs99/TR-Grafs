@@ -10,6 +10,8 @@ import numpy as np
 from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg, NavigationToolbar2Tk)
 import pprint
+from matplotlib.artist import Artist
+import matplotlib
 
 solve = 0           # It will be set to 1 if we want to solve the path between nodes
 edges_path = []
@@ -19,6 +21,12 @@ edges_path = []
 # estiguessin fora de la funció highlighter, perquè el que passa es que només es pinta el camí quan cliques a un node.
 # Hauria d'intentar que tot el que tinc ara a highlighter estigués a una funció dijkstra que s'estigués executant tota
 # l'estona o algo així, o que el jeroni si sap faci alguna forma per actualitzar el widget tota l'estona (sense funció)
+
+def hlt_refresh(event):
+    if True:
+        event.artist.stale = True
+        event.artist.figure.canvas.draw_idle()
+
 
 # Defining the function that highlights the nodes
 def highlighter(event):
@@ -43,8 +51,7 @@ def highlighter(event):
             for edge_attribute in graph[node].values():
                 edge_attribute['width'] = 3
 
-        event.artist.stale = True
-        event.artist.figure.canvas.draw_idle()
+        hlt_refresh(event)
 
 
     # if we did not hit a node, bail
@@ -88,8 +95,9 @@ def highlighter(event):
     picked_nodes.set(str(node_picker))
 
     # update the screen
-    event.artist.stale = True
-    event.artist.figure.canvas.draw_idle()
+    # event.artist.stale = True
+    # event.artist.figure.canvas.draw_idle()
+    hlt_refresh(event)
 
 
 # Defining the function that will generate and show a graph in the GUI
@@ -149,6 +157,9 @@ def show_graph(frame, *args):
     fig.canvas.mpl_connect('pick_event', highlighter)
 
     canvas.draw()
+    # fig.canvas.mpl_connect('pick_event', hlt_refresh)
+
+    hlt_refresh()
     # We create a canvas with the figure, and we put it in the GUI
 
 
