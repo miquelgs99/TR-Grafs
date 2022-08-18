@@ -2,13 +2,13 @@ from tkinter import *
 from tkinter import ttk
 import GraphFrame
 import SummaryFrame
-import control
+import Main
 
 
-class MenuFrame(control.StdFrame):
+class MenuFrame(Main.StdFrame):
 
     def __init__(self):
-        control.StdFrame.__init__(self)
+        Main.StdFrame.__init__(self)
 
         # Buttons ----------
         nav_button1 = ttk.Button(self, text="GraphFrame",
