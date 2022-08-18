@@ -8,14 +8,14 @@ from grave.style import use_attributes
 from grave import plot_network
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import SummaryFrame
-import control
+import Main
 import MenuFrame
 
 
-class GraphFrame(control.StdFrame):
+class GraphFrame(Main.StdFrame):
 
     def __init__(self):
-        control.StdFrame.__init__(self)
+        Main.StdFrame.__init__(self)
 
         # Declaring variables
         self.node_picker = []

@@ -7,6 +7,8 @@ class MainGui:
     def __init__(self):
         self.root = Tk()
         self.root.geometry('1300x900')
+        main_win = MenuFrame.MenuFrame()
+        main_win.grid(row=0, column=0, padx=10, pady=10)
 
         # region Menubar
 
@@ -22,15 +24,19 @@ class MainGui:
         self.menubar.add_cascade(label="Ayuda", menu=self.help_menu)
 
         self.file_menu.add_command(label="´Refresh", command=self.refresh)
-        self.edit_menu.add_command(label="Go to")
+
+        self.goto_menu = Menu(self.edit_menu, tearoff=0)
+        self.edit_menu.add_cascade(label="Go to", menu=self.goto_menu)
+        self.goto_menu.add_command(label='Menu', command=None)  # lambda: StdFrame.new_window(main_win, MenuFrame.MenuFrame
+        self.goto_menu.add_command(label='GraphFrame')
+        self.goto_menu.add_command(label='SummaryFrame')
 
         self.help_menu.add_command(label="GitHub")
         self.help_menu.add_command(label="FAQ")
         self.file_menu.add_command(label="Quit")
         # endregion
 
-        main_win = MenuFrame.MenuFrame()
-        main_win.grid(row=0, column=0, padx=10, pady=10)
+
 
     def run_gui(self):
         self.root.mainloop()
@@ -38,6 +44,19 @@ class MainGui:
     def refresh(self):
         self.root.destroy()
         self.__init__()
+
+
+class StdFrame(Frame):
+
+    def new_window(self, win):
+        self.destroy()
+        win = win()
+        win.grid(row=0, column=0, padx=10, pady=10)
+        win.mainloop()
+
+    def __init__(self):
+        Frame.__init__(self)
+        pass
 
 
 if __name__ == '__main__':

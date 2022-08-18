@@ -1,13 +1,14 @@
 from tkinter import *
 from tkinter import ttk
-import control
+import Main
 import GraphFrame
 import MenuFrame
 
-class SummaryFrame(control.StdFrame):
+
+class SummaryFrame(Main.StdFrame):
 
     def __init__(self):
-        control.StdFrame.__init__(self)
+        Main.StdFrame.__init__(self)
 
         nav_button1 = ttk.Button(self, text="MenuFrame",
                                  command=lambda: self.new_window(MenuFrame.MenuFrame))
