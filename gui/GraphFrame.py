@@ -167,13 +167,11 @@ class GraphFrame(Main.StdFrame):
     def show_graph(self, frame, *args):
 
         # canvas.get_tk_widget().delete("all")
-        try:
-            if int(self.vertex_entry.get()) > 0:
-                self.size = int(self.vertex_entry.get())
-            else:
-                messagebox.showinfo(title="Error", message="Enter a valid number!")
-        except ValueError:
+        if not self.vertex_entry.get().isnumeric() or not int(self.vertex_entry.get()) > 0:
             messagebox.showinfo(title="Error", message="Enter a valid number!")
+            return
+
+        self.size = int(self.vertex_entry.get())
 
         # The matrix of the graph is created with randint from numpy
         matrix = np.random.randint(-100, 20, size=(self.size, self.size))
