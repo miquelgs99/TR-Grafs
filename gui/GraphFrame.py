@@ -166,7 +166,7 @@ class GraphFrame(Main.StdFrame):
     # Defining the function that will generate and show a graph in the GUI
     def show_graph(self, frame, *args):
 
-        # canvas.get_tk_widget().delete("all")
+        plt.cla()  # Erase the previous graph
         try:
             if int(self.vertex_entry.get()) > 0:
                 self.size = int(self.vertex_entry.get())
@@ -219,7 +219,6 @@ class GraphFrame(Main.StdFrame):
         self.fig.canvas.mpl_connect('pick_event', self.highlighter)
 
         self.canvas.draw()
-        # fig.canvas.mpl_connect('pick_event', hlt_refresh)
 
     def dijkstra(self, *args):
 
