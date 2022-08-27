@@ -21,8 +21,8 @@ class GraphFrame(Main.StdFrame):
         self.node_picker = []
         self.djk_path = []
         self.edges_path = []
-        self.solve = 0  # It will be set to 1 if we want to solve the path between nodes
         self.graph = nx.Graph()
+
         # region GUI
 
         # region Creating the frames and styling them
@@ -181,7 +181,9 @@ class GraphFrame(Main.StdFrame):
 
         self.create_canvas()
 
-        if not self.vertex_entry.get().isnumeric() or not int(self.vertex_entry.get()) > 0:
+        if not self.vertex_entry.get().isnumeric() or \
+            not int(self.vertex_entry.get()) > 0 or \
+            self.vertex_entry.get() == "":
             messagebox.showinfo(title="Error", message="Enter a valid number!")
             return
 
@@ -231,12 +233,16 @@ class GraphFrame(Main.StdFrame):
         self.fig.canvas.mpl_connect('pick_event', self.highlighter)
 
         self.canvas.draw()
-        # fig.canvas.mpl_connect('pick_event', hlt_refresh)
 
+    # Defining the function that will find the path between the selected nodes
     def dijkstra(self, *args):
 
-        self.djk_path = nx.dijkstra_path(self.graph, source=self.node_picker[0], target=self.node_picker[1],
-                                         weight='weight')
+        try:
+            self.djk_path = nx.dijkstra_path(self.graph, source=self.node_picker[0], target=self.node_picker[1],
+                                             weight='weight')
+        except nx.exception.NetworkXNoPath:
+            messagebox.showinfo(title="Error", message="There's no path between this nodes.")
+            return
 
         first = True
         for node in self.djk_path:
