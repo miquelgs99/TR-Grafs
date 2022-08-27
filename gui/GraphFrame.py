@@ -83,7 +83,7 @@ class GraphFrame(Main.StdFrame):
         # region Creating the buttons
 
         # We create the button that will generate the graph, and we assign the previous function made to it
-        generate_button = ttk.Button(text_frame, text="Generate!", command=lambda: self.show_graph(graph_frame))
+        generate_button = ttk.Button(text_frame, text="Generate!", command=self.generate_graph)
         generate_button.grid(column=1, row=1, padx=10, pady=10)
 
         # We create the button that will generate the graph, and we assign the previous function made to it
@@ -164,7 +164,7 @@ class GraphFrame(Main.StdFrame):
         event.artist.figure.canvas.draw_idle()
 
     # Defining the function that will generate and show a graph in the GUI
-    def show_graph(self, frame, *args):
+    def generate_graph(self, *args):
 
         # canvas.get_tk_widget().delete("all")
         if not self.vertex_entry.get().isnumeric() or not int(self.vertex_entry.get()) > 0:
