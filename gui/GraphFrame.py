@@ -80,7 +80,7 @@ class GraphFrame(Main.StdFrame):
         # region Creating the buttons
 
         # We create the button that will generate the graph, and we assign the previous function made to it
-        generate_button = ttk.Button(text_frame, text="Generate!", command=self.generate_graph)
+        generate_button = ttk.Button(text_frame, text="Generate!", command=self.show_graph)
         generate_button.grid(column=1, row=1, padx=10, pady=10)
 
         # We create the button that will generate the graph, and we assign the previous function made to it
@@ -136,10 +136,10 @@ class GraphFrame(Main.StdFrame):
             return
 
         # pull out the graph
-        graph = event.artist.graph
+        self.graph = event.artist.graph
 
         # clear any non-default color on nodes
-        for node, attributes in graph.nodes(data=True):
+        for node, attributes in self.graph.nodes(data=True):
             if len(self.node_picker) == 2:
                 if node not in self.djk_path:
                     attributes.pop('color', None)
@@ -148,7 +148,7 @@ class GraphFrame(Main.StdFrame):
             else:
                 pass
 
-        for u, v, attributes in graph.edges(data=True):
+        for u, v, attributes in self.graph.edges(data=True):
             possible_edges = [(u, v), (v, u)]
             if possible_edges[0] not in self.edges_path and possible_edges[1] not in self.edges_path:
                 attributes.pop('width', None)
@@ -167,7 +167,7 @@ class GraphFrame(Main.StdFrame):
             self.node_picker.append(event.nodes[0])
 
         for node in event.nodes:
-            graph.nodes[node]['color'] = 'red'
+            self.graph.nodes[node]['color'] = 'red'
 
         self.picked_nodes.set(str(self.node_picker))
 
@@ -175,18 +175,7 @@ class GraphFrame(Main.StdFrame):
         event.artist.stale = True
         event.artist.figure.canvas.draw_idle()
 
-
-    # Defining the function that will generate and show a graph in the GUI
-    def generate_graph(self):
-
-        self.create_canvas()
-
-        if not self.vertex_entry.get().isnumeric() or not int(self.vertex_entry.get()) > 0:
-            messagebox.showinfo(title="Error", message="Enter a valid number!")
-            return
-
-        self.size = int(self.vertex_entry.get())
-
+    def create_graph(self):
         # The matrix of the graph is created with randint from numpy
         matrix = np.random.randint(-100, 20, size=(self.size, self.size))
 
@@ -202,14 +191,12 @@ class GraphFrame(Main.StdFrame):
         matrix[0][2] = 0
 
         # We create the graph from the matrix
-        self.graph = nx.from_numpy_matrix(matrix)
+        return nx.from_numpy_matrix(matrix)
+
+    def plot_graph(self):
 
         for node, node_attr in self.graph.nodes(data=True):
             node_attr['size'] = 500
-
-        # ORIGINAL ------------------
-
-        # # We create the figures where the graph will be
 
         art = plot_network(self.graph, layout="shell", ax=self.ax,
                            node_style=use_attributes(),
@@ -233,12 +220,32 @@ class GraphFrame(Main.StdFrame):
         self.canvas.draw()
         # fig.canvas.mpl_connect('pick_event', hlt_refresh)
 
+    # Defining the function that will generate and show a graph in the GUI
+    def show_graph(self):
+
+        self.create_canvas()
+
+        if not self.vertex_entry.get().isnumeric() or not int(self.vertex_entry.get()) > 0:
+            messagebox.showinfo(title="Error", message="Enter a valid number!")
+            return
+
+        self.size = int(self.vertex_entry.get())
+
+        self.graph = self.create_graph()
+
+
+        # # We create the figures where the graph will be
+        self.plot_graph()
+
+
     def dijkstra(self, *args):
 
         self.djk_path = nx.dijkstra_path(self.graph, source=self.node_picker[0], target=self.node_picker[1],
                                          weight='weight')
 
         first = True
+
+        # TODO: Reduce this to simply   highlighting the nodes and edges in the graph
         for node in self.djk_path:
             if first:
                 first = False
@@ -249,3 +256,13 @@ class GraphFrame(Main.StdFrame):
             self.graph.nodes[node]['color'] = 'red'
             for edge_attribute in self.graph[node].values():
                 edge_attribute['width'] = 3
+
+        # Remove edges that are not in the path
+        for u, v, attributes in self.graph.edges(data=True):
+            possible_edges = [(u, v), (v, u)]
+            if possible_edges[0] not in self.edges_path and possible_edges[1] not in self.edges_path:
+                attributes.pop('width', None)
+            else:
+                pass
+
+        self.plot_graph()
