@@ -45,8 +45,8 @@ class GraphFrame(Main.StdFrame):
         text_frame.grid(column=0, row=0)
 
         # We create the frame where the graphs will be shown
-        graph_frame = ttk.Frame(self, style='Frame2.TFrame')
-        graph_frame.grid(column=1, row=0)
+        self.graph_frame = ttk.Frame(self, style='Frame2.TFrame')
+        self.graph_frame.grid(column=1, row=0)
 
         # We create the frame where the nav buttons will be
         nav_frame = ttk.Frame(self, style='Frame3.TFrame')
@@ -54,11 +54,8 @@ class GraphFrame(Main.StdFrame):
         # endregion
 
         # region Creating the canvas
-        self.fig, self.ax = plt.subplots()
-        plt.axis('off')
-        self.canvas = FigureCanvasTkAgg(self.fig, master=graph_frame)  # A tk.DrawingArea.
-        self.canvas.draw()
-        self.canvas.get_tk_widget().grid(column=0, row=0, padx=20, pady=20)
+        self.create_canvas()
+
         # endregion
 
         # region Creating the labels
@@ -116,6 +113,21 @@ class GraphFrame(Main.StdFrame):
         # endregion
         # endregion
 
+    def create_canvas(self):
+        '''
+        Draws/redraws a canvas on which to draw graphs on.
+        :return:
+        '''
+        try:
+            self.canvas.get_tk_widget().destroy()
+        except:
+            pass
+        self.fig, self.ax = plt.subplots()
+        plt.axis('off')
+        self.canvas = FigureCanvasTkAgg(self.fig, master=self.graph_frame)  # A tk.DrawingArea.
+        self.canvas.get_tk_widget().pack(pady=20)  # grid(column=0, row=0, padx=20, pady=20)
+        self.canvas.draw()
+
     # Defining the function that highlights the nodes
     def highlighter(self, event):
 
@@ -163,10 +175,12 @@ class GraphFrame(Main.StdFrame):
         event.artist.stale = True
         event.artist.figure.canvas.draw_idle()
 
-    # Defining the function that will generate and show a graph in the GUI
-    def generate_graph(self, *args):
 
-        # canvas.get_tk_widget().delete("all")
+    # Defining the function that will generate and show a graph in the GUI
+    def generate_graph(self):
+
+        self.create_canvas()
+
         if not self.vertex_entry.get().isnumeric() or not int(self.vertex_entry.get()) > 0:
             messagebox.showinfo(title="Error", message="Enter a valid number!")
             return
