@@ -7,7 +7,7 @@ import networkx as nx
 from grave.style import use_attributes
 from grave import plot_network
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-import SummaryFrame
+import SudokuColoringFrame
 import Main
 import MenuFrame
 
@@ -104,8 +104,8 @@ class GraphFrame(Main.StdFrame):
 
         # region Nav buttons
 
-        nav_button1 = ttk.Button(nav_frame, text="SummaryFrame",
-                                 command=lambda: self.new_window(SummaryFrame.SummaryFrame))
+        nav_button1 = ttk.Button(nav_frame, text="SudokuColoringFrame",
+                                 command=lambda: self.new_window(SudokuColoringFrame.SudokuColoringFrame))
         nav_button1.grid(row=0, column=0, padx=10, pady=10)
 
         nav_button2 = ttk.Button(nav_frame, text="MenuFrame",

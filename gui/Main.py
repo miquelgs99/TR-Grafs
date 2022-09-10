@@ -29,7 +29,7 @@ class MainGui:
         self.edit_menu.add_cascade(label="Go to", menu=self.goto_menu)
         self.goto_menu.add_command(label='Menu', command=None)  # lambda: StdFrame.new_window(main_win, MenuFrame.MenuFrame
         self.goto_menu.add_command(label='GraphFrame')
-        self.goto_menu.add_command(label='SummaryFrame')
+        self.goto_menu.add_command(label='SudokuColoringFrame')
 
         self.help_menu.add_command(label="GitHub")
         self.help_menu.add_command(label="FAQ")

@@ -1,5 +1,3 @@
-
-# region sudoku
 import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -9,28 +7,32 @@ size = 10
 
 matrix = np.random.randint(-4, 2, size=(size, size))
 
-# We go through the matrix to make it symmetrical and also eliminate the self-connected edges
+isolated_node = 0
+
 for i in range(len(matrix)):
     for j in range(len(matrix[i])):
+
         if matrix[i][j] != matrix[j][i]:
             matrix[i][j] = matrix[j][i]
 
         if matrix[i][j] < 0:
             matrix[i][j] = 0
-    matrix[i][i] = 0
 
-isolated_node = 0
-
-for i in range(len(matrix)):
-    for j in range(len(matrix[i])):
         if matrix[i][j] == 0:
             isolated_node += 1
 
     if isolated_node == len(matrix):
-        num = (np.random.randint(1, (len(matrix) / 2)))
-        for _ in range(num):
+        rep = (np.random.randint(1, len(matrix)))
+        for _ in range(rep):
+            # try:
+            #     matrix[i][i+1] = 1
+            # except IndexError:
+            #     matrix[i][i-1] = 1
             matrix[i][np.random.randint(0, (len(matrix)))] = 1
     isolated_node = 0
+    matrix[i][i] = 0
+
+pprint(matrix)
 
 node = "".join([str(x) for x in range(size)])
 t_ = {}
@@ -56,7 +58,7 @@ for i in range(len(degree)):
     j = 0
     for j in range(len(degree)):
         if j not in index:
-            if degree[j] > _max:
+            if degree[j] >= _max:
                 _max = degree[j]
                 idx = j
     index.append(idx)
@@ -73,11 +75,12 @@ for n in sorted_node:
             colorDict[node[j]].remove(setTheColor[0])
 
 G = nx.from_numpy_matrix(matrix)
-nx.draw(G, with_labels=True)
+pos = nx.spring_layout(G)
+nx.draw_networkx_nodes(G, pos, node_size=250)
+nx.draw_networkx_edges(G, pos, width=2)
+nx.draw_networkx_labels(G, pos, labels={n: n + 1 for n in G})
 plt.show()
 
 # Print the solution
 for t, w in sorted(theSolution.items()):
     print("Node", t, " = ", w)
-
-# endregion

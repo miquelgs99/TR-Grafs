@@ -1,5 +1,3 @@
-
-# region mst
 import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
@@ -28,5 +26,3 @@ nx.draw_networkx_edges(graph, pos)
 edge_labels = nx.get_edge_attributes(graph, "weight")
 nx.draw_networkx_edge_labels(graph, pos, edge_labels)
 plt.show()
-
-# endregion
