@@ -36,8 +36,6 @@ class MainGui:
         self.file_menu.add_command(label="Quit")
         # endregion
 
-
-
     def run_gui(self):
         self.root.mainloop()
 
