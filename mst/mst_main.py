@@ -2,14 +2,6 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
 
-# matrix = np.matrix([[0, 3, 0, 0, 5, 0, 4],
-#                     [3, 0, 1, 0, 0, 0, 0],
-#                     [0, 1, 0, 5, 0, 8, 0],
-#                     [0, 0, 5, 0, 0, 0, 0],
-#                     [5, 0, 0, 0, 0, 4, 0],
-#                     [0, 0, 8, 0, 4, 0, 5],
-#                     [4, 0, 0, 0, 0, 5, 0]])
-
 matrix = np.random.randint(-10, 20, size=(15, 15))
 
 for i in range(len(matrix)):
@@ -22,14 +14,6 @@ for i in range(len(matrix)):
     matrix[i][i] = 0
 
 graph = nx.from_numpy_matrix(matrix)
-
-# pos = {0: (0, 0),
-#        1: (2, 0),
-#        2: (4, 0),
-#        3: (6, 2),
-#        4: (0, -4),
-#        5: (4, -4),
-#        6: (2, -2)}
 
 pos = nx.spring_layout(graph)
 
