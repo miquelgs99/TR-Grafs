@@ -77,14 +77,9 @@ for n in sorted_node:
             colorDict[node[j]].remove(setTheColor[0])
 
 G = nx.from_numpy_matrix(matrix)
-# print(G.nodes(data=True))
-# for node, attributes in G.nodes(data=True):
-#     attributes.keys = "color"
-# print(G.nodes[0])
-# # Print the solution
+
 # for t, w in sorted(theSolution.items()):
 #     print("Node", t, " = ", w)
-#     G.nodes[t]['color'] = w
 
 sorted_solution = dict(sorted(theSolution.items()))
 colors = []
@@ -96,5 +91,3 @@ nx.draw_networkx_nodes(G, pos, node_size=250, node_color=colors)
 nx.draw_networkx_edges(G, pos, width=2)
 nx.draw_networkx_labels(G, pos, labels={n: n + 1 for n in G})
 plt.show()
-
-

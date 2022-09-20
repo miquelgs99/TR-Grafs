@@ -6,7 +6,7 @@ import timeit
 from SudokuGame import SudokuGame
 import math
 from tkinter import *
-import MainFrame
+import Main
 
 
 class EnterKeyValue:
@@ -22,19 +22,19 @@ class EnterKeyValue:
             self.last_clicked = timeit.default_timer()
 
 
-class SudokuFrame(MainFrame.StdFrame):
+class SudokuFrame(Main.StdFrame):
     def __init__(self, root, sudoku_size):
         self.parent = root
         self.sudoku_size = sudoku_size
         self.set_size(sudoku_size=self.sudoku_size)
-        self.parent.title("Sudoku Frame")
+        # self.parent.title("Sudoku Frame")
 
         self.row = 0
         self.col = 0
 
         Frame.__init__(self, root)
 
-        self.pack(fill=BOTH, expand=1)
+        self.grid(column=0, row=0)
 
         self.create_frame = ttk.Frame(self, width=self.width, height=self.height)
         self.create_grid()

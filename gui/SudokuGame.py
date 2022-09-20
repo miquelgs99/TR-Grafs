@@ -1,6 +1,7 @@
 from SudokuMatrix import SudokuMatrix
 import math
 
+
 class SudokuGame(object):
     def __init__(self, sudoku_size=9):
         self.initial_matrix = SudokuMatrix(sudoku_size).sudoku_matrix

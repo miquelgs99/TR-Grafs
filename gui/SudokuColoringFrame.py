@@ -10,6 +10,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import Main
 import GraphFrame
 import MenuFrame
+import SudokuFrame
 
 
 class SudokuColoringFrame(Main.StdFrame):
@@ -26,8 +27,10 @@ class SudokuColoringFrame(Main.StdFrame):
         top_text_frame = ttk.Frame(self)
         top_text_frame.grid(column=1, row=0)
 
-        self.graph_frame = ttk.Frame(self)
-        self.graph_frame.grid(column=1, row=1)
+        self.sudoku_frame = SudokuFrame.SudokuFrame(self, 9)
+        self.sudoku_frame.grid(column=1, row=1)
+        self.coloring_frame = ttk.Frame(self)
+        self.coloring_frame.grid(column=1, row=1)
 
         nav_frame = ttk.Frame(self)
         nav_frame.grid(column=2, row=2)
@@ -92,6 +95,7 @@ class SudokuColoringFrame(Main.StdFrame):
             self.which_frame = "Sudoku"
 
             # Put here the frame change
+            self.sudoku_frame.tkraise()
 
         elif self.which_frame == "Sudoku" and btn == "left":
             self.left_label.configure(foreground='#F0F0F0')
@@ -100,6 +104,7 @@ class SudokuColoringFrame(Main.StdFrame):
             self.which_frame = "Coloring"
 
             # Put here the frame change
+            self.coloring_frame.tkraise()
 
     def create_canvas(self):
         """
@@ -113,7 +118,7 @@ class SudokuColoringFrame(Main.StdFrame):
 
         self.fig, self.ax = plt.subplots()
         plt.axis('off')
-        self.canvas = FigureCanvasTkAgg(self.fig, master=self.graph_frame)  # A tk.DrawingArea.
+        self.canvas = FigureCanvasTkAgg(self.fig, master=self.coloring_frame)  # A tk.DrawingArea.
         self.canvas.get_tk_widget().grid(column=0, row=0, padx=20, pady=20)
         self.canvas.draw()
 

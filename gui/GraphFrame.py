@@ -10,7 +10,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import SudokuColoringFrame
 import Main
 import MenuFrame
-
+import time
 
 class GraphFrame(Main.StdFrame):
 
@@ -247,8 +247,12 @@ class GraphFrame(Main.StdFrame):
 
         try:
             try:
+                st = time.time()
                 self.djk_path = nx.dijkstra_path(self.graph, source=self.node_picker[0], target=self.node_picker[1],
                                                  weight='weight')
+                et = time.time()
+                elapsed_time = et - st
+                print('Execution time:', elapsed_time, 'seconds')
             except IndexError:
                 messagebox.showinfo(title="Error", message="Select two nodes.")
                 return

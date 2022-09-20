@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import ttk
 import GraphFrame
 import SudokuColoringFrame
+import SudokuFrame
 import Main
 
 
@@ -19,5 +20,3 @@ class MenuFrame(Main.StdFrame):
                                  command=lambda: self.new_window(SudokuColoringFrame.SudokuColoringFrame))
         nav_button2.grid(row=1, column=0, sticky=E)
         # -------------------
-
-
