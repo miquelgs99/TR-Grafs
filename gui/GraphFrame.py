@@ -18,8 +18,8 @@ class GraphFrame(Main.StdFrame):
     def __init__(self):
         Main.StdFrame.__init__(self)
 
-        self.configure(width=1180, height=710)
-        # self.grid(sticky="nswe")
+        # self.configure(width=1180, height=710)
+        self.grid(sticky="nswe")
 
         self.columnconfigure(2, weight=1)
         self.rowconfigure(1, weight=1)
@@ -34,16 +34,16 @@ class GraphFrame(Main.StdFrame):
         # region GUI
 
         # We create the frame where the text will be shown
-        text_frame = ctk.CTkFrame(self)
-        text_frame.grid(column=0, row=0)
+        text_frame = ctk.CTkFrame(self, corner_radius=0)
+        text_frame.grid(column=0, row=0, sticky="nswe", rowspan=2)
 
         # We create the frame where the graphs will be shown
         self.graph_frame = ctk.CTkFrame(self)
-        self.graph_frame.grid(column=1, row=0)
+        self.graph_frame.grid(column=1, row=0, padx=10)
 
         # We create the frame where the nav buttons will be
         nav_frame = ctk.CTkFrame(self)
-        nav_frame.grid(column=2, row=1)
+        nav_frame.grid(column=1, row=1, padx=20, sticky="E")
         # endregion
 
         self.create_canvas()
@@ -51,13 +51,10 @@ class GraphFrame(Main.StdFrame):
         # region Creating the labels
 
         # We put some text explaining what to write in the text box
-        vertex_label = ctk.CTkLabel(text_frame, text="Introduce the number of vertex that you want: ")
+        vertex_label = ctk.CTkLabel(text_frame, text="Quants vèrtexs tindrà el graf?", text_font=("helvetica", 12))
         vertex_label.grid(column=0, row=0, padx=10, pady=10)
 
-        # We create the label where the picked nodes will be
-
         self.picked_nodes = StringVar()  # The string variable where the label is associated
-
         # picked_nodes_label = ctk.CTkLabel(text_frame, textvariable=self.picked_nodes)
         # picked_nodes_label.grid(column=2, row=2, padx=10, pady=10)
 
@@ -66,36 +63,36 @@ class GraphFrame(Main.StdFrame):
         # region We create the entry text box
 
         self.vertex_entry = ctk.CTkEntry(text_frame, width=50)
-        self.vertex_entry.grid(column=1, row=0, padx=10, pady=10)
+        self.vertex_entry.grid(column=0, row=1, padx=10, pady=10)
         # endregion
 
         # region Creating the buttons
 
         # We create the button that will generate the graph, and we assign the previous function made to it
         generate_button = ctk.CTkButton(text_frame,
-                                        text="Generate!",
+                                        text="Generar graf!",
                                         text_font=("helvetica", 12),
                                         width=120,
                                         height=32,
                                         corner_radius=8,
                                         text_color="black",
                                         command=self.show_graph)
-        generate_button.grid(column=1, row=1, padx=10, pady=10)
+        generate_button.grid(column=0, row=2, padx=10, pady=10)
 
         # We create the button that will generate the graph, and we assign the previous function made to it
         dijkstra_button = ctk.CTkButton(text_frame,
-                                        text="Solve!",
+                                        text="Trobar camí!",
                                         text_font=("helvetica", 12),
                                         width=120,
                                         height=32,
                                         corner_radius=8,
                                         text_color="black",
                                         command=self.dijkstra)
-        dijkstra_button.grid(column=1, row=2, padx=10, pady=10)
+        dijkstra_button.grid(column=0, row=3, padx=10, pady=10)
 
         # We create the button that will create the random number, and we assign the previous function made to it
         random_button = ctk.CTkButton(text_frame,
-                                      text="Random number!",
+                                      text="Nombre aleatori!",
                                       text_font=("helvetica", 12),
                                       width=120,
                                       height=32,
@@ -106,7 +103,7 @@ class GraphFrame(Main.StdFrame):
                                                         0, np.random.randint(3, 20)
                                                     )  # Insert new value
                                                     ])
-        random_button.grid(column=1, row=3, padx=10, pady=10)
+        random_button.grid(column=0, row=4, padx=10, pady=10)
 
         # endregion
 
@@ -128,7 +125,7 @@ class GraphFrame(Main.StdFrame):
                                     corner_radius=8,
                                     text_color="black",
                                     command=lambda: self.new_window(MenuFrame.MenuFrame))
-        nav_button2.grid(row=0, column=1, padx=10, pady=10)
+        nav_button2.grid(row=0, column=1, padx=10, pady=10, sticky="E")
         # endregion
         # endregion
 
@@ -143,11 +140,11 @@ class GraphFrame(Main.StdFrame):
             pass
 
         self.fig, self.ax = plt.subplots()
-        self.fig.set_figheight(4)
-        self.fig.set_figwidth(6)
+        self.fig.set_figheight(5.5)
+        self.fig.set_figwidth(9.75)
         plt.axis('off')
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.graph_frame)  # A tk.DrawingArea.
-        self.canvas.get_tk_widget().grid(column=0, row=0, padx=20, pady=20)
+        self.canvas.get_tk_widget().grid(column=0, row=0, padx=20, pady=20, sticky="E")
         self.canvas.draw()
 
     # Defining the function that highlights the nodes
@@ -311,32 +308,4 @@ class GraphFrame(Main.StdFrame):
         self.path_exists = True
         self.plot_graph()
 
-    def pop_error(self, title, text):
 
-        error = ctk.CTkToplevel(self)
-        x = self.winfo_x()
-        y = self.winfo_y()
-        error.geometry("+%d+%d" % (x+720, y+300))
-        error.overrideredirect(True)
-
-        error.columnconfigure(0, weight=1)
-        error.rowconfigure(0, weight=1)
-
-        error_frame = ctk.CTkFrame(error, corner_radius=10, width=200, height=200, bg_color="white",
-                                   border_width=2)
-        error_frame.grid(column=0, row=0)
-
-        error_frame.columnconfigure(0, weight=1)
-        error_frame.rowconfigure(0, weight=2)
-
-        error.wm_attributes('-transparentcolor', 'white')
-
-        title_label = ctk.CTkLabel(error_frame, text=title, text_font=("bold helvetica", 25))
-        title_label.grid(column=0, row=0, padx=20, pady=20)
-
-        error_label = ctk.CTkLabel(error_frame, text=text, text_font=("helvetica", 12, "italic"))
-        error_label.grid(column=0, row=1, padx=20, pady=10)
-
-        quit_error = ctk.CTkButton(error_frame, text="D'acord",
-                                   text_color="black", text_font=("helvetica", 12), command=error.destroy)
-        quit_error.grid(column=0, row=2, pady=10)

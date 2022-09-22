@@ -12,7 +12,9 @@ class MenuFrame(Main.StdFrame):
     def __init__(self):
         Main.StdFrame.__init__(self)
 
-        self.configure(width=2000)
+        self.configure(bg_color="black")
+        # self.configure(border_color="black")
+        self.configure(border_width=2)
 
         # Buttons ----------
         nav_button1 = ctk.CTkButton(self,
@@ -51,3 +53,4 @@ class MenuFrame(Main.StdFrame):
                                     command=lambda: self.new_window(SudokuColoringFrame.SudokuColoringFrame))
         nav_button3.grid(row=2, column=0, padx=10, pady=10)
         # -------------------
+

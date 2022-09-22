@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
+import customtkinter as ctk
 import matplotlib.pyplot as plt
 import numpy as np
 import networkx as nx
@@ -18,40 +19,46 @@ class SudokuColoringFrame(Main.StdFrame):
     def __init__(self):
         Main.StdFrame.__init__(self)
 
+        # self.configure(width=1180, height=710)
+        self.grid(sticky="nswe")
+
+        self.columnconfigure(2, weight=1)
+        self.rowconfigure(1, weight=1)
+
         self.size = 0
         self.graph = nx.Graph()
 
-        text_frame = ttk.Frame(self)
+        text_frame = ctk.CTkFrame(self)
         text_frame.grid(column=0, row=1)
 
-        top_text_frame = ttk.Frame(self)
+        top_text_frame = ctk.CTkFrame(self)
         top_text_frame.grid(column=1, row=0)
 
         self.sudoku_frame = SudokuFrame.SudokuFrame(self, 9)
         self.sudoku_frame.grid(column=1, row=1)
-        self.coloring_frame = ttk.Frame(self)
+        self.coloring_frame = ctk.CTkFrame(self)
         self.coloring_frame.grid(column=1, row=1)
 
-        nav_frame = ttk.Frame(self)
+        nav_frame = ctk.CTkFrame(self)
         nav_frame.grid(column=2, row=2)
 
         self.create_canvas()
 
         # region We create the entry text box
 
-        self.vertex_entry = ttk.Entry(text_frame, width=15)
+        self.vertex_entry = ctk.CTkEntry(text_frame, width=15)
         self.vertex_entry.grid(column=1, row=0, padx=10, pady=10)
         # endregion
 
         self.which_frame = "Coloring"
 
-        self.left_label = ttk.Label(top_text_frame, text='Coloring', foreground='#F0F0F0', font=('Segoe UI', 15))
+        self.left_label = ctk.CTkLabel(top_text_frame, text='Coloring', fg_color='#F0F0F0', text_font=('Segoe UI', 15))
         self.left_label.grid(column=0, row=0, padx=20)
 
-        self.mid_label = ttk.Label(top_text_frame, text='Coloring', font=('Segoe UI', 20))
+        self.mid_label = ctk.CTkLabel(top_text_frame, text='Coloring', text_font=('Segoe UI', 20))
         self.mid_label.grid(column=1, row=0, padx=20)
 
-        self.right_label = ttk.Label(top_text_frame, text='Sudoku', font=('Segoe UI', 15))
+        self.right_label = ctk.CTkLabel(top_text_frame, text='Sudoku', text_font=('Segoe UI', 15))
         self.right_label.grid(column=2, row=0, sticky=EW, padx=20)
 
         self.left_label.bind("<Button-1>", lambda event, btn="left": self.change_to(btn))
@@ -60,29 +67,21 @@ class SudokuColoringFrame(Main.StdFrame):
         # region Creating the buttons
 
         # We create the button that will generate the graph, and we assign the previous function made to it
-        generate_button = ttk.Button(text_frame, text="Generate!", command=self.show_graph)
+        generate_button = ctk.CTkButton(text_frame, text="Generate!", command=self.show_graph)
         generate_button.grid(column=1, row=1, padx=10, pady=10)
 
         # We create the button that will create the random number, and we assign the previous function made to it
-        random_button = ttk.Button(text_frame, text="Random number!",
-                                   command=lambda: [self.vertex_entry.delete(0, END),  # Deletes the current value
+        random_button = ctk.CTkButton(text_frame, text="Random number!",
+                                      command=lambda: [self.vertex_entry.delete(0, END),  # Deletes the current value
                                                     self.vertex_entry.insert(
                                                         0, np.random.randint(3, 20)
                                                     )  # Insert new value
                                                     ])
         random_button.grid(column=1, row=3, padx=10, pady=10)
 
-        nav_button1 = ttk.Button(nav_frame, text="MenuFrame",
-                                 command=lambda: self.new_window(MenuFrame.MenuFrame))
+        nav_button1 = ctk.CTkButton(nav_frame, text="MenuFrame",
+                                    command=lambda: self.new_window(MenuFrame.MenuFrame))
         nav_button1.grid(row=0, column=0)
-
-        nav_button2 = ttk.Button(nav_frame, text="GraphFrame",
-                                 command=lambda: self.new_window(GraphFrame.GraphFrame))
-        nav_button2.grid(row=0, column=1)
-
-        quit_button = ttk.Button(nav_frame, text="Quit",
-                                 command=lambda: self.destroy())
-        quit_button.grid(row=0, column=2)
 
         # endregion
 
