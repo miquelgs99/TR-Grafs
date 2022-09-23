@@ -68,3 +68,5 @@ for key in edge_labels:
         tree_edge_labels[key] = edge_labels[key]
 nx.draw_networkx_edge_labels(graph, pos, tree_edge_labels)
 plt.show()
+
+
