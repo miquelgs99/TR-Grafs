@@ -21,23 +21,22 @@ class SudokuColoringFrame(Main.StdFrame):
 
         # self.configure(width=1180, height=710)
         self.grid(sticky="nswe")
-
-        self.columnconfigure(2, weight=1)
-        self.rowconfigure(1, weight=1)
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(0, weight=1)
 
         self.size = 0
         self.graph = nx.Graph()
 
         text_frame = ctk.CTkFrame(self, corner_radius=0)
-        text_frame.grid(column=0, row=0, sticky="nswe", rowspan=2)
+        text_frame.grid(column=0, row=0, sticky="nsw", rowspan=2)
 
         top_text_frame = ctk.CTkFrame(self)
-        top_text_frame.grid(column=1, row=0)
+        top_text_frame.grid(column=1, row=0, padx=10, pady=10)
 
         self.sudoku_frame = SudokuFrame.SudokuFrame(self, 9)
-        self.sudoku_frame.grid(column=1, row=1, sticky="nswe")
+        self.sudoku_frame.grid(column=1, row=1, sticky="nswe", padx=10, pady=10)
         self.coloring_frame = ctk.CTkFrame(self)
-        self.coloring_frame.grid(column=1, row=1, sticky="nswe")
+        self.coloring_frame.grid(column=1, row=1, sticky="nswe", padx=10, pady=10)
 
         nav_frame = ctk.CTkFrame(self)
         nav_frame.grid(column=1, row=1, padx=20, sticky="E")
@@ -55,10 +54,14 @@ class SudokuColoringFrame(Main.StdFrame):
 
         self.which_frame = "Coloring"
 
-        self.left_label = ctk.CTkLabel(top_text_frame,
-                                       text='Coloring',
-                                       text_color="#383838",
-                                       text_font=('Segoe UI', 15))
+        self.left_label = ctk.CTkButton(top_text_frame,
+                                        text='Coloring',
+                                        text_font=('Segoe UI', 15),
+                                        text_color="#383838",
+                                        bg_color="#383838",
+                                        fg_color="#383838",
+                                        hover=False,
+                                        command=(lambda: self.change_to("left")))
         self.left_label.grid(column=0, row=0, padx=20)
 
         self.mid_label = ctk.CTkLabel(top_text_frame,
@@ -66,13 +69,14 @@ class SudokuColoringFrame(Main.StdFrame):
                                       text_font=('Segoe UI', 20))
         self.mid_label.grid(column=1, row=0, padx=20)
 
-        self.right_label = ctk.CTkLabel(top_text_frame,
-                                        text='Sudoku',
-                                        text_font=('Segoe UI', 15))
+        self.right_label = ctk.CTkButton(top_text_frame,
+                                         text='Sudoku',
+                                         text_font=('Segoe UI', 15),
+                                         bg_color="#383838",
+                                         fg_color="#383838",
+                                         hover=False,
+                                         command=(lambda: self.change_to("right")))
         self.right_label.grid(column=2, row=0, padx=20)
-
-        top_text_frame.bind("<Return>", lambda event, btn="left": self.change_to(btn))
-        # self.right_label.bind("<Button-1>", lambda event, btn="right": self.change_to(btn))
 
         # region Creating the buttons
 
@@ -116,17 +120,17 @@ class SudokuColoringFrame(Main.StdFrame):
     def change_to(self, btn, event=None):
 
         if self.which_frame == "Coloring" and btn == "right":
-            self.left_label.configure(foreground='black')
+            self.left_label.configure(text_color="white")
             self.mid_label.configure(text='Sudoku')
-            self.right_label.configure(foreground='#383838')
+            self.right_label.configure(text_color="#383838")
             self.which_frame = "Sudoku"
 
             self.sudoku_frame.tkraise()
 
         elif self.which_frame == "Sudoku" and btn == "left":
-            self.left_label.configure(foreground='#383838')
+            self.left_label.configure(text_color="#383838")
             self.mid_label.configure(text='Coloring')
-            self.right_label.configure(foreground='black')
+            self.right_label.configure(text_color="white")
             self.which_frame = "Coloring"
 
             self.coloring_frame.tkraise()
@@ -142,6 +146,8 @@ class SudokuColoringFrame(Main.StdFrame):
             pass
 
         self.fig, self.ax = plt.subplots()
+        self.fig.set_figheight(5.5)
+        self.fig.set_figwidth(9.75)
         plt.axis('off')
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.coloring_frame)  # A tk.DrawingArea.
         self.canvas.get_tk_widget().grid(column=0, row=0, padx=20, pady=20)
@@ -149,34 +155,23 @@ class SudokuColoringFrame(Main.StdFrame):
 
     def create_graph(self):
         # The matrix of the graph is created with randint from numpy
-        matrix = np.random.randint(-4, 2, size=(self.size, self.size))
+        graph = nx.random_tree(self.size)
 
-        isolated_node = 0
+        for node in graph.nodes:
+            # graph.add_edge(node, np.random.randint(self.size - node - 1, self.size))
+            if 1 < node < (len(graph.nodes) - 1):
+                graph.add_edge(node, np.random.randint(node - 2, node + 2))
+            else:
+                if node < (len(graph.nodes) - 1):
+                    graph.add_edge(node, np.random.randint(node, node + 2))
+                else:
+                    graph.add_edge(node, np.random.randint(node - 2, node))
 
-        for i in range(len(matrix)):
-            for j in range(len(matrix[i])):
+        matrix = nx.to_numpy_array(graph)
 
-                if matrix[i][j] != matrix[j][i]:
-                    matrix[i][j] = matrix[j][i]
+        for node in graph.nodes:
+            matrix[node][node] = 0
 
-                if matrix[i][j] < 0:
-                    matrix[i][j] = 0
-
-                if matrix[i][j] == 0:
-                    isolated_node += 1
-
-            if isolated_node == len(matrix):
-                rep = (np.random.randint(1, len(matrix)))
-                for _ in range(rep):
-                    # try:
-                    #     matrix[i][i+1] = 1
-                    # except IndexError:
-                    #     matrix[i][i-1] = 1
-                    matrix[i][np.random.randint(0, (len(matrix)))] = 1
-            isolated_node = 0
-            matrix[i][i] = 0
-
-        # We create the graph from the matrix
         return nx.from_numpy_matrix(matrix)
 
     # Defining the function that will plot the graph in matplotlib

@@ -26,6 +26,8 @@ class MapFrame(Main.StdFrame):
         self.map_frame = ctk.CTkFrame(self, width=935, height=600)
         self.map_frame.grid(column=1, row=0, padx=10, pady=10)
         self.map_frame.grid_propagate(0)
+        self.map_frame.columnconfigure(0, weight=1)
+        self.map_frame.rowconfigure(0, weight=1)
 
         bottom_frame = ctk.CTkFrame(self)
         bottom_frame.grid(column=1, row=1, padx=20, pady=10, sticky="we")
@@ -82,7 +84,7 @@ class MapFrame(Main.StdFrame):
         f_types = [('Jpg Files', '*.jpg'), ('Jpeg Files', '*.jpeg'), ('PNG Files', '*.png')]
         f = tk.filedialog.askopenfilename(filetypes=f_types)
         self.mapCanvas = MapCanvas.MapCanvas(self.map_frame, f, self.text_frame)
-        self.mapCanvas.grid(row=0, column=0, padx=20, pady=20, sticky="nswe")
+        self.mapCanvas.grid(row=0, column=0, padx=10, pady=10, sticky="nswe")
 
 
 # if __name__ == "__main__":
