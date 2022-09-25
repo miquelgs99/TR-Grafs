@@ -5,34 +5,20 @@ from pprint import pprint
 
 size = 10
 
-matrix = np.random.randint(1, 2, size=(size, size))
 
-isolated_node = 0
+def create_graph():
+    graph = nx.random_tree(size)
+
+    for v in graph.nodes:
+        graph.add_edge(v, np.random.randint(size - v - 1, size))
+
+    return nx.to_numpy_array(graph)
+
+
+matrix = create_graph()
 
 for i in range(len(matrix)):
-    for j in range(len(matrix[i])):
-
-        if matrix[i][j] != matrix[j][i]:
-            matrix[i][j] = matrix[j][i]
-
-        if matrix[i][j] < 0:
-            matrix[i][j] = 0
-
-        if matrix[i][j] == 0:
-            isolated_node += 1
-
-    if isolated_node == len(matrix):
-        rep = (np.random.randint(1, len(matrix)))
-        for _ in range(rep):
-            # try:
-            #     matrix[i][i+1] = 1
-            # except IndexError:
-            #     matrix[i][i-1] = 1
-            matrix[i][np.random.randint(0, (len(matrix)))] = 1
-    isolated_node = 0
     matrix[i][i] = 0
-
-pprint(matrix)
 
 node = "".join([str(x) for x in range(size)])
 t_ = {}
@@ -47,9 +33,8 @@ for i in range(len(matrix)):
 # initiate the possible color
 colorDict = {}
 for i in range(len(matrix)):
-    colorDict[node[i]] = ["#eb34eb", "#ADD8E6", "Red", "Yellow",
-                          "Green", "#eba234", "#5e0000", "#0008ff",
-                          "#0088ff", "#ff82ac"]
+    colorDict[node[i]] = ["#eb34eb", "#ADD8E6", "Red", "Yellow", "Green", "#eba234", "#5e0000", "#0008ff", "#0088ff",
+                          "#ff82ac"]
 
 # sort the node depends on the degree
 sorted_node = []
@@ -77,9 +62,6 @@ for n in sorted_node:
             colorDict[node[j]].remove(setTheColor[0])
 
 G = nx.from_numpy_matrix(matrix)
-
-# for t, w in sorted(theSolution.items()):
-#     print("Node", t, " = ", w)
 
 sorted_solution = dict(sorted(theSolution.items()))
 colors = []

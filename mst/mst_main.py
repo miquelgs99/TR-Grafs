@@ -2,18 +2,32 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
 
-matrix = np.random.randint(-10, 20, size=(15, 15))
 
-for i in range(len(matrix)):
-    for j in range(len(matrix[i])):
-        if matrix[i][j] != matrix[j][i]:
-            matrix[i][j] = matrix[j][i]
+def create_graph():
+    size = 10
 
-        if matrix[i][j] < 0:
-            matrix[i][j] = 0
-    matrix[i][i] = 0
+    graph = nx.random_tree(size)
 
-graph = nx.from_numpy_matrix(matrix)
+    for node in graph.nodes:
+        graph.add_edge(node, np.random.randint(size-node-1, size))
+
+    matrix = nx.to_numpy_array(graph)
+
+    for node in graph.nodes:
+        matrix[node][node] = 0
+
+    weight_matrix = np.random.randint(1, 20, size=(size, size))
+
+    matrix = np.multiply(matrix, weight_matrix)
+
+    print(matrix)
+
+    return nx.from_numpy_matrix(matrix)
+
+
+graph = create_graph()
+for u, v, attr in graph.edges(data=True):
+    attr["weight"] = int(round(attr["weight"]))
 
 pos = nx.spring_layout(graph)
 

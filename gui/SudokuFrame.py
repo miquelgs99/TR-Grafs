@@ -1,6 +1,7 @@
 import time
 from tkinter import *
 from tkinter import ttk
+import customtkinter as ctk
 import tkinter.messagebox as tkMessageBox
 import timeit
 from SudokuGame import SudokuGame

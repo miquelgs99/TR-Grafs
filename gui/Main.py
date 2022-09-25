@@ -14,7 +14,6 @@ class MainGui:
         self.root.geometry('1280x720')
         self.root.resizable(False, False)
         self.root.title("Els grafs a la vida quotidiana: problemes i algorismes amb Python")
-        # self.root.wm_attributes('-transparentcolor', '#66fc03')
 
         self.image = Image.open("1.png")
         self.img_copy = self.image.copy()

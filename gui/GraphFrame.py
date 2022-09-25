@@ -13,6 +13,7 @@ import Main
 import MenuFrame
 import time
 
+
 class GraphFrame(Main.StdFrame):
 
     def __init__(self):
@@ -109,15 +110,6 @@ class GraphFrame(Main.StdFrame):
 
         # region Nav buttons
 
-        # nav_button1 = ctk.CTkButton(nav_frame,
-        #                             text="Coloració i resolució de sudokus",
-        #                             width=120,
-        #                             height=32,
-        #                             corner_radius=8,
-        #                             text_color="black",
-        #                             command=lambda: self.new_window(SudokuColoringFrame.SudokuColoringFrame))
-        # nav_button1.grid(row=0, column=0, padx=10, pady=10)
-
         nav_button2 = ctk.CTkButton(nav_frame,
                                     text="Menú principal",
                                     width=120,
@@ -142,6 +134,7 @@ class GraphFrame(Main.StdFrame):
         self.fig, self.ax = plt.subplots()
         self.fig.set_figheight(5.5)
         self.fig.set_figwidth(9.75)
+
         plt.axis('off')
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.graph_frame)  # A tk.DrawingArea.
         self.canvas.get_tk_widget().grid(column=0, row=0, padx=20, pady=20, sticky="E")
@@ -199,20 +192,27 @@ class GraphFrame(Main.StdFrame):
 
     # Defining the function that will create a graph from the entry
     def create_graph(self):
-        # The matrix of the graph is created with randint from numpy
-        matrix = np.random.randint(-100, 20, size=(self.size, self.size))
 
-        # We go through the matrix to make it symmetrical and also eliminate the self-connected edges
-        for i in range(len(matrix)):
-            for j in range(len(matrix[i])):
-                if matrix[i][j] != matrix[j][i]:
-                    matrix[i][j] = matrix[j][i]
+        graph = nx.random_tree(self.size)
 
-                if matrix[i][j] < 0:
-                    matrix[i][j] = 0
-            matrix[i][i] = 0
+        for node in graph.nodes:
+            # graph.add_edge(node, np.random.randint(self.size - node - 1, self.size))
+            if 1 < node < (len(graph.nodes)-1):
+                graph.add_edge(node, np.random.randint(node-2, node+2))
+            else:
+                if node < (len(graph.nodes)-1):
+                    graph.add_edge(node, np.random.randint(node, node+2))
+                else:
+                    graph.add_edge(node, np.random.randint(node-2, node))
 
-        # We create the graph from the matrix
+        matrix = nx.to_numpy_array(graph)
+
+        for node in graph.nodes:
+            matrix[node][node] = 0
+
+        weight_matrix = np.random.randint(1, 20, size=(self.size, self.size))
+        matrix = np.multiply(matrix, weight_matrix)
+
         return nx.from_numpy_matrix(matrix)
 
     # Defining the function that will plot the graph in matplotlib
@@ -220,6 +220,9 @@ class GraphFrame(Main.StdFrame):
 
         for node, node_attr in self.graph.nodes(data=True):
             node_attr['size'] = 500
+
+        for u, v, attr in self.graph.edges(data=True):
+            attr["weight"] = int(round(attr["weight"]))
 
         art = plot_network(self.graph, layout="shell", ax=self.ax,
                            node_style=use_attributes(),

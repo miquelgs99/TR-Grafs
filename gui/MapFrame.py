@@ -2,50 +2,89 @@ import tkinter as tk
 from tkinter import filedialog
 import MapCanvas
 import Main
+import customtkinter as ctk
+import MenuFrame
+
 
 class MapFrame(Main.StdFrame):
 
     def __init__(self):
         Main.StdFrame.__init__(self)
+        self.grid(sticky="nswe")
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(0, weight=1)
 
         self.image = None
         self.image2 = None
-        # self.geometry("600x600")  # Size of the window
-        # self.title('Xarxa ferroviària')
-        my_font1 = ('times', 18, 'bold')
+        my_font1 = ('Helvetica', 12)
 
-        subFrame1 = tk.Frame(self)
-        subFrame1.grid(row=0, column=0)
-        l1 = tk.Label(subFrame1, text='Escull un mapa com a fons.', width=30, font=my_font1)
-        l1.grid(row=0, column=0)
-        b1 = tk.Button(subFrame1, text='Upload Files', width=20, command=self.upload_file)
-        b1.grid(row=0, column=1)
+        self.text_frame = ctk.CTkFrame(self, corner_radius=0, width=20)
+        self.text_frame.grid(column=0, row=0, sticky="nswe", rowspan=2)
+        self.text_frame.rowconfigure(0, weight=10)
+        self.text_frame.rowconfigure(1, weight=11)
 
-        # creates a frame that is a child of 'mainFrame'
-        subFrame2 = tk.Frame(self)
-        subFrame2.grid(row=1, column=0)
-        l2 = tk.Label(subFrame2, text='Escala', width=8, font=my_font1)
-        l2.grid(row=1, column=0)
-        self.b2 = tk.Label(subFrame2, text=' : ', width=7, font=my_font1)
-        self.b2.grid(row=1, column=1)
-        l3 = tk.Label(subFrame2, text='Introdueix distància:', width=20, font=my_font1)
-        l3.grid(row=1, column=2)
-        e1 = tk.Entry(subFrame2, width=5)
-        e1.bind("<Return>", (lambda event: self.reply(e1.get())))
-        e1.grid(row=1, column=3)
+        self.map_frame = ctk.CTkFrame(self, width=935, height=600)
+        self.map_frame.grid(column=1, row=0, padx=10, pady=10)
+        self.map_frame.grid_propagate(0)
+
+        bottom_frame = ctk.CTkFrame(self)
+        bottom_frame.grid(column=1, row=1, padx=20, pady=10, sticky="we")
+        bottom_frame.columnconfigure(0, weight=1)
+        bottom_frame.columnconfigure(1, weight=1)
+
+        select_map = ctk.CTkButton(bottom_frame,
+                                   text='Escollir mapa com a fons',
+                                   text_font=("helvetica", 12),
+                                   width=120,
+                                   height=32,
+                                   corner_radius=8,
+                                   text_color="black",
+                                   command=self.upload_file)
+        select_map.grid(row=0, column=0, padx=10, pady=10, sticky="w")
+
+        select_map = ctk.CTkButton(bottom_frame,
+                                   text='Escollir mapa com a fons',
+                                   text_font=("helvetica", 12),
+                                   width=120,
+                                   height=32,
+                                   corner_radius=8,
+                                   text_color="black",
+                                   command=self.upload_file)
+        select_map.grid(row=0, column=0, padx=10, pady=10, sticky="w")
+
+        # creates a frame th
+        scale_label = ctk.CTkLabel(bottom_frame, text='Escala: ', text_font=my_font1, anchor="e")
+        scale_label.grid(row=0, column=0, padx=10, pady=10, sticky="e")
+
+        self.scale = ctk.CTkLabel(bottom_frame, text="", text_font=my_font1, anchor="w")
+        self.scale.grid(row=0, column=1, padx=10, pady=10, sticky="w")
+
+        distance_label = ctk.CTkLabel(self.text_frame, text='Introdueix \n distància:', text_font=my_font1, anchor="e")
+        distance_label.grid(row=1, column=0, padx=10, pady=10, sticky="ne")
+
+        scale_entry = ctk.CTkEntry(self.text_frame, width=50)
+        scale_entry.bind("<Return>", (lambda event: self.reply(scale_entry.get())))
+        scale_entry.grid(row=1, column=1, padx=10, pady=10, sticky="nw")
+
+        nav_button2 = ctk.CTkButton(bottom_frame,
+                                    text="Menú principal",
+                                    width=120,
+                                    height=32,
+                                    corner_radius=8,
+                                    text_color="black",
+                                    command=lambda: self.new_window(MenuFrame.MenuFrame))
+        nav_button2.grid(row=0, column=1, padx=10, pady=10, sticky="e")
 
     def reply(self, name):
-        self.b2.config(text="1:" + name)
+        self.scale.configure(text="1:" + name)
 
     def upload_file(self):
         f_types = [('Jpg Files', '*.jpg'), ('Jpeg Files', '*.jpeg'), ('PNG Files', '*.png')]
         f = tk.filedialog.askopenfilename(filetypes=f_types)
-        subFrame3 = tk.Frame(self)
-        subFrame3.grid(row=2, column=0)
-        self.mapCanvas = MapCanvas.MapCanvas(self, f)
-        self.mapCanvas.grid(row=0, column=0)
+        self.mapCanvas = MapCanvas.MapCanvas(self.map_frame, f, self.text_frame)
+        self.mapCanvas.grid(row=0, column=0, padx=20, pady=20, sticky="nswe")
 
 
-if __name__ == "__main__":
-    app = MapFrame()
-    app.mainloop()
+# if __name__ == "__main__":
+#     app = MapFrame()
+#     app.mainloop()

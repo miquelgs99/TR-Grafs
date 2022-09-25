@@ -52,6 +52,6 @@ class MenuFrame(Main.StdFrame):
                                     border_color="black",
                                     text_color="black",
                                     text="Optimització d'una xarxa ferroviària",
-                                    command=lambda: self.new_window(SudokuColoringFrame.SudokuColoringFrame))
+                                    command=lambda: self.new_window(MapFrame.MapFrame))
         nav_button3.grid(row=2, column=0, padx=10, pady=10)
         # -------------------
