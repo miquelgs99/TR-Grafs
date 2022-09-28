@@ -3,6 +3,7 @@ from tkinter import filedialog
 import MapCanvas
 import Main
 
+
 class MapFrame(Main.StdFrame):
 
     def __init__(self):
@@ -20,6 +21,8 @@ class MapFrame(Main.StdFrame):
         l1.grid(row=0, column=0)
         b1 = tk.Button(subFrame1, text='Upload Files', width=20, command=self.upload_file)
         b1.grid(row=0, column=1)
+        b2 = tk.Button(subFrame1, text='Escollir punts', width=20, command=self.choose_points)
+        b2.grid(row=0, column=2)
 
         # creates a frame that is a child of 'mainFrame'
         subFrame2 = tk.Frame(self)
@@ -43,7 +46,11 @@ class MapFrame(Main.StdFrame):
         subFrame3 = tk.Frame(self)
         subFrame3.grid(row=2, column=0)
         self.mapCanvas = MapCanvas.MapCanvas(self, f)
-        self.mapCanvas.grid(row=0, column=0)
+        self.mapCanvas.grid(row=2, column=0)
+
+    def choose_points(self):
+        if self.mapCanvas:
+            self.mapCanvas.change_add_points()
 
 
 if __name__ == "__main__":
