@@ -1,16 +1,20 @@
 import customtkinter as tk
-from tkinter import Frame
 from PIL import Image, ImageTk
 import Main
+from grave import plot_network
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
-from tkinter import ttk
+import networkx as nx
 
-class MapCanvas(Frame):
+
+class MapCanvas(tk.CTkFrame):
     def __init__(self, root, f):
         self.image = self.get_image(f)
 
         super().__init__(root, bg="blue", width=self.image.width, height=self.image.height)
+
+        self.node_counter = 0
+        self.positions = {}
 
         self.fig, self.ax = plt.subplots()
         self.ax.imshow(self.image)
@@ -23,8 +27,8 @@ class MapCanvas(Frame):
         self.fid1 = self.canvas.get_tk_widget().bind("<Button-1>", self.canvas_clicked)
         self.fid2 = self.canvas.get_tk_widget().bind("<B1-Motion>", self.canvas_dragged)
         self.canvas.draw()
-
         self.line = None
+        self.G = nx.Graph()
 
     def get_image(self, f):
         img = Image.open(f)  # read the image file
@@ -42,6 +46,9 @@ class MapCanvas(Frame):
         x = event.x  # x coordinate of event, not Data
         y = event.y  # y coordinate of event, not Data
         self.ax.plot(x, y, 'ro')
+        self.node_counter += 1
+        self.positions[self.node_counter] = (x,y)
+        # self.G.add_node(self.node_counter, pos=(x, y))
         self.canvas.draw()
 
     def canvas_dragged(self, event):
@@ -58,3 +65,12 @@ class MapCanvas(Frame):
             self.canvas.get_tk_widget().unbind("<Button-1>", self.fid1)
             self.canvas.get_tk_widget().unbind("<B1-Motion>", self.fid2)
         self.canvas.get_tk_widget().bind("<Button-1>", self.point_clicked)
+
+    def draw_graph(self):
+        self.G.add_nodes_from(self.positions.keys())
+
+        for n, p in self.positions.items():
+            self.G.nodes[n]['pos'] = p
+
+        nx.draw(self.G, self.positions)
+        self.canvas.draw()
