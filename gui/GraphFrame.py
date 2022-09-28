@@ -47,6 +47,7 @@ class GraphFrame(Main.StdFrame):
         nav_frame.grid(column=1, row=1, padx=20, sticky="E")
         # endregion
 
+        self.cid=0
         self.create_canvas()
 
         # region Creating the labels
@@ -126,10 +127,10 @@ class GraphFrame(Main.StdFrame):
         Draws/redraws a canvas on which to draw graphs on.
         :return:
         """
-        try:
-            self.canvas.get_tk_widget().destroy()
-        except AttributeError:
-            pass
+        # try:
+        #     self.canvas.get_tk_widget().destroy()
+        # except AttributeError:
+        #     pass
 
         self.fig, self.ax = plt.subplots()
         self.fig.set_figheight(5.5)
@@ -192,7 +193,6 @@ class GraphFrame(Main.StdFrame):
 
     # Defining the function that will create a graph from the entry
     def create_graph(self):
-
         graph = nx.random_tree(self.size)
 
         for node in graph.nodes:
@@ -217,14 +217,16 @@ class GraphFrame(Main.StdFrame):
 
     # Defining the function that will plot the graph in matplotlib
     def plot_graph(self):
-
         for node, node_attr in self.graph.nodes(data=True):
             node_attr['size'] = 500
 
         for u, v, attr in self.graph.edges(data=True):
             attr["weight"] = int(round(attr["weight"]))
 
-        art = plot_network(self.graph, layout="shell", ax=self.ax,
+        if self.cid:
+            self.canvas.mpl_disconnect(self.cid)
+            self.art.set_picker(None)
+        self.art = plot_network(self.graph, layout="shell", ax=self.ax,
                            node_style=use_attributes(),
                            edge_style=use_attributes(),
                            node_label_style={'font_size': 7,
@@ -238,16 +240,13 @@ class GraphFrame(Main.StdFrame):
         pos = nx.shell_layout(self.graph)
         nx.draw_networkx_edge_labels(self.graph, pos, edge_labels, font_size=8)
 
-        # I don't know what this does
-        art.set_picker(10)
-        # self.ax.set_title('Click on the nodes!')
-        self.fig.canvas.mpl_connect('pick_event', self.highlighter)
+        self.art.set_picker(10)
+        self.cid = self.canvas.mpl_connect('pick_event', self.highlighter)
 
         self.canvas.draw()
 
     # Defining the function that will show the graph in the GUI
     def show_graph(self):
-
         self.create_canvas()
         self.node_picker = []
         self.picked_nodes.set(str(self.node_picker))
@@ -265,7 +264,6 @@ class GraphFrame(Main.StdFrame):
         self.plot_graph()
 
     def dijkstra(self, *args):
-
         try:
             try:
                 st = time.time()
@@ -310,5 +308,3 @@ class GraphFrame(Main.StdFrame):
 
         self.path_exists = True
         self.plot_graph()
-
-
