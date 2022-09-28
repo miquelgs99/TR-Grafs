@@ -71,7 +71,7 @@ class GraphFrame(Main.StdFrame):
         # region Creating the buttons
 
         # We create the button that will generate the graph, and we assign the previous function made to it
-        generate_button = ctk.CTkButton(text_frame,
+        self.generate_button = ctk.CTkButton(text_frame,
                                         text="Generar graf!",
                                         text_font=("helvetica", 12),
                                         width=120,
@@ -79,10 +79,10 @@ class GraphFrame(Main.StdFrame):
                                         corner_radius=8,
                                         text_color="black",
                                         command=self.show_graph)
-        generate_button.grid(column=0, row=2, padx=10, pady=10)
+        self.generate_button.grid(column=0, row=2, padx=10, pady=10)
 
         # We create the button that will generate the graph, and we assign the previous function made to it
-        dijkstra_button = ctk.CTkButton(text_frame,
+        self.dijkstra_button = ctk.CTkButton(text_frame,
                                         text="Trobar camí!",
                                         text_font=("helvetica", 12),
                                         width=120,
@@ -90,10 +90,10 @@ class GraphFrame(Main.StdFrame):
                                         corner_radius=8,
                                         text_color="black",
                                         command=self.dijkstra)
-        dijkstra_button.grid(column=0, row=3, padx=10, pady=10)
+        self.dijkstra_button.grid(column=0, row=3, padx=10, pady=10)
 
         # We create the button that will create the random number, and we assign the previous function made to it
-        random_button = ctk.CTkButton(text_frame,
+        self.random_button = ctk.CTkButton(text_frame,
                                       text="Nombre aleatori!",
                                       text_font=("helvetica", 12),
                                       width=120,
@@ -105,7 +105,7 @@ class GraphFrame(Main.StdFrame):
                                                         0, np.random.randint(3, 20)
                                                     )  # Insert new value
                                                     ])
-        random_button.grid(column=0, row=4, padx=10, pady=10)
+        self.random_button.grid(column=0, row=4, padx=10, pady=10)
 
         # endregion
 
@@ -247,14 +247,15 @@ class GraphFrame(Main.StdFrame):
 
     # Defining the function that will show the graph in the GUI
     def show_graph(self):
-        self.create_canvas()
-        self.node_picker = []
-        self.picked_nodes.set(str(self.node_picker))
 
         if not self.vertex_entry.get().isnumeric() or not int(self.vertex_entry.get()) > 0:
             # messagebox.showinfo(title="Error", message="Enter a valid number!")
             self.pop_error("Error", "Introdueix un nombre vàlid!")
             return
+
+        self.create_canvas()
+        self.node_picker = []
+        self.picked_nodes.set(str(self.node_picker))
 
         self.size = int(self.vertex_entry.get())
 
@@ -262,6 +263,7 @@ class GraphFrame(Main.StdFrame):
 
         # We create the figures where the graph will be
         self.plot_graph()
+
 
     def dijkstra(self, *args):
         try:

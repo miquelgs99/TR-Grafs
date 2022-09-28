@@ -90,7 +90,7 @@ class StdFrame(ctk.CTkFrame):
         error_frame.columnconfigure(0, weight=1)
         error_frame.rowconfigure(0, weight=2)
 
-        error.wm_attributes('-transparentcolor', 'white')
+        error.wm_attributes('-transparent')
 
         title_label = ctk.CTkLabel(error_frame, text=title, text_font=("bold helvetica", 25))
         title_label.grid(column=0, row=0, padx=20, pady=20)
