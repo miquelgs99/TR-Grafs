@@ -1,8 +1,9 @@
-import tkinter as tk
+
 from tkinter import filedialog
 import MapCanvas
 import Main
-
+import customtkinter as tk
+import MenuFrame
 
 class MapFrame(Main.StdFrame):
 

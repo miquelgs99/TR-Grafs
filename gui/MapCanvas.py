@@ -1,4 +1,4 @@
-import tkinter as tk
+import customtkinter as tk
 from tkinter import Frame
 from PIL import Image, ImageTk
 import Main
