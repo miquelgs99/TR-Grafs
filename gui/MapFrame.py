@@ -57,8 +57,8 @@ class MapFrame(Main.StdFrame):
         scale_label = ctk.CTkLabel(bottom_frame, text='Escala: ', text_font=my_font1, anchor="e")
         scale_label.grid(row=0, column=0, padx=10, pady=10, sticky="e")
 
-        self.scale = ctk.CTkLabel(bottom_frame, text="", text_font=my_font1, anchor="w")
-        self.scale.grid(row=0, column=1, padx=10, pady=10, sticky="w")
+        self.scale_value = ctk.CTkLabel(bottom_frame, text="", text_font=my_font1, anchor="w")
+        self.scale_value.grid(row=0, column=1, padx=10, pady=10, sticky="w")
 
         distance_label = ctk.CTkLabel(self.text_frame, text='Introdueix \n distància:', text_font=my_font1, anchor="e")
         distance_label.grid(row=1, column=0, padx=10, pady=10, sticky="ne")
@@ -96,8 +96,10 @@ class MapFrame(Main.StdFrame):
                                    command=lambda: self.new_window(MenuFrame.MenuFrame))
         go_to_menu.grid(row=0, column=1, padx=10, pady=10, sticky="e")
 
-    def reply(self, name):
-        self.scale.configure(text="1:" + name)
+    def reply(self, num):
+        self.scale_value.configure(text="1:" + num)
+        if self.mapCanvas:
+            self.mapCanvas.scale = num
 
     def upload_file(self):
         f_types = [('Jpg Files', '*.jpg'), ('Jpeg Files', '*.jpeg'), ('PNG Files', '*.png')]
