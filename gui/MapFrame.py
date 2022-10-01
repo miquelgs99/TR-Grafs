@@ -1,5 +1,4 @@
 import tkinter as tk
-from tkinter import filedialog
 import MapCanvas
 import Main
 import customtkinter as ctk
@@ -68,14 +67,34 @@ class MapFrame(Main.StdFrame):
         scale_entry.bind("<Return>", (lambda event: self.reply(scale_entry.get())))
         scale_entry.grid(row=1, column=1, padx=10, pady=10, sticky="nw")
 
-        nav_button2 = ctk.CTkButton(bottom_frame,
-                                    text="Menú principal",
-                                    width=120,
-                                    height=32,
-                                    corner_radius=8,
-                                    text_color="black",
-                                    command=lambda: self.new_window(MenuFrame.MenuFrame))
-        nav_button2.grid(row=0, column=1, padx=10, pady=10, sticky="e")
+        choose_button = ctk.CTkButton(self.text_frame,
+                                      text='Escollir punts',
+                                      text_font=("helvetica", 12),
+                                      width=120,
+                                      height=32,
+                                      corner_radius=8,
+                                      text_color="black",
+                                      command=self.choose_points)
+        choose_button.grid(row=1, column=2, padx=10, pady=10, sticky="nw")
+
+        print_graph_button = ctk.CTkButton(self.text_frame,
+                                           text='Imprimir graf',
+                                           text_font=("helvetica", 12),
+                                           width=120,
+                                           height=32,
+                                           corner_radius=8,
+                                           text_color="black",
+                                           command=self.print_graph)
+        print_graph_button.grid(row=0, column=2, padx=10, pady=10, sticky="nw")
+
+        go_to_menu = ctk.CTkButton(bottom_frame,
+                                   text="Menú principal",
+                                   width=120,
+                                   height=32,
+                                   corner_radius=8,
+                                   text_color="black",
+                                   command=lambda: self.new_window(MenuFrame.MenuFrame))
+        go_to_menu.grid(row=0, column=1, padx=10, pady=10, sticky="e")
 
     def reply(self, name):
         self.scale.configure(text="1:" + name)
@@ -85,6 +104,14 @@ class MapFrame(Main.StdFrame):
         f = tk.filedialog.askopenfilename(filetypes=f_types)
         self.mapCanvas = MapCanvas.MapCanvas(self.map_frame, f, self.text_frame)
         self.mapCanvas.grid(row=0, column=0, padx=10, pady=10, sticky="nswe")
+
+    def choose_points(self):
+        if self.mapCanvas:
+            self.mapCanvas.change_add_points()
+
+    def print_graph(self):
+        if self.mapCanvas:
+            self.mapCanvas.draw_graph()
 
 
 # if __name__ == "__main__":

@@ -9,148 +9,72 @@ from grave.style import use_attributes
 from grave import plot_network
 
 
-class MapCanvas(tk.Canvas):
+class MapCanvas(ctk.CTkFrame):
     def __init__(self, root, f, text_frame):
 
         self.text_frame = text_frame
-        self.img = plt.imread(f)
-        super().__init__(master=root)
-        # self.bind("<Button-1>", self.canvas_clicked)
-        # self.bind("<B1-Motion>", self.canvas_dragged)
-        self.state = "scale"
-        self.graph = nx.Graph()
-
-        generate_button = ctk.CTkButton(self.text_frame,
-                                        text="Generar graf!",
-                                        text_font=("helvetica", 12),
-                                        width=120,
-                                        height=32,
-                                        corner_radius=8,
-                                        text_color="black",
-                                        command=self.show_graph)
-        generate_button.grid(column=0, row=2, padx=10, pady=10)
-
-        self.vertex_entry = ctk.CTkEntry(self.text_frame, width=50)
-        self.vertex_entry.grid(column=0, row=1, padx=10, pady=10)
-
-    # def canvas_clicked(self, event):
-    #     if self.state == "scale":
-    #         self.x1, self.y1 = event.x, event.y
-    #         self.del_line()
-    #         self.line = self.create_line(self.x1, self.y1, self.x1, self.y1, fill="black", width=20)
-    #
-    # def canvas_dragged(self, event):
-    #     if self.state == "scale":
-    #         self.x2, self.y2 = event.x, event.y
-    #         if self.line:
-    #             self.coords(self.line, self.x1, self.y1, self.x2, self.y2)
-    #
-    # def del_line(self):
-    #     if self.line:
-    #         self.delete(self.line)
-
-    def create_canvas(self):
-        """
-        Draws/redraws a canvas on which to draw graphs on.
-        :return:
-        """
-        try:
-            self.canvas.get_tk_widget().destroy()
-        except AttributeError:
-            pass
+        self.image = self.get_image(f)
+        super().__init__(root, bg="blue")
+        self.node_counter = 0
+        self.positions = {}
 
         self.fig, self.ax = plt.subplots()
-        self.ax.imshow(self.img, extent=[-2, 2, -1.28, 1.28])
-        self.fig.set_figheight(5.85)
-        self.fig.set_figwidth(9.15)
+        self.ax.imshow(self.image)
         self.fig.subplots_adjust(top=1, bottom=0, left=0, right=1)
         plt.axis('off')
         self.canvas = FigureCanvasTkAgg(self.fig, master=self)  # A tk.DrawingArea.
-        self.canvas.get_tk_widget().grid(column=0, row=0, sticky="nswe")
+        self.canvas.get_tk_widget().grid(sticky="nswe")
+        self.canvas.get_tk_widget().config(width=self.image.width, height=self.image.height)
+
+        self.fid1 = self.canvas.get_tk_widget().bind("<Button-1>", self.canvas_clicked)
+        self.fid2 = self.canvas.get_tk_widget().bind("<B1-Motion>", self.canvas_dragged)
+        self.canvas.draw()
+        self.line = None
+
+        self.graph = nx.Graph()
+
+    def get_image(self, f):
+        img = Image.open(f)  # read the image file
+        new_im_w = 500
+        new_im_h = int(img.height / img.width * new_im_w)
+        img = img.resize((new_im_w, new_im_h))  # new width & height
+        return img
+
+    def canvas_clicked(self, event):
+        self.x1, self.y1 = event.x, event.y
+        self.del_line()
+        self.line = self.canvas.get_tk_widget().create_line(self.x1, self.y1, self.x1, self.y1, fill="black",
+                                                            width=10)
+
+    def point_clicked(self, event):
+        x = event.x  # x coordinate of event, not Data
+        y = event.y  # y coordinate of event, not Data
+        self.ax.plot(x, y, 'ro')
+        self.node_counter += 1
+        self.positions[self.node_counter] = (x, y)
+        # self.G.add_node(self.node_counter, pos=(x, y))
         self.canvas.draw()
 
-    # Defining the function that will create a graph from the entry
-    def create_graph(self):
+    def canvas_dragged(self, event):
+        self.x2, self.y2 = event.x, event.y
+        if self.line:
+            self.canvas.get_tk_widget().coords(self.line, self.x1, self.y1, self.x2, self.y2)
 
-        graph = nx.random_tree(self.size)
+    def del_line(self):
+        if self.line:
+            self.canvas.get_tk_widget().delete(self.line)
 
-        for node in graph.nodes:
-            # graph.add_edge(node, np.random.randint(self.size - node - 1, self.size))
-            if 1 < node < (len(graph.nodes)-1):
-                graph.add_edge(node, np.random.randint(node-2, node+2))
-            else:
-                if node < (len(graph.nodes)-1):
-                    graph.add_edge(node, np.random.randint(node, node+2))
-                else:
-                    graph.add_edge(node, np.random.randint(node-2, node))
+    def change_add_points(self):
+        if self.fid1:
+            self.canvas.get_tk_widget().unbind("<Button-1>", self.fid1)
+            self.canvas.get_tk_widget().unbind("<B1-Motion>", self.fid2)
+        self.canvas.get_tk_widget().bind("<Button-1>", self.point_clicked)
 
-        matrix = nx.to_numpy_array(graph)
+    def draw_graph(self):
+        self.graph.add_nodes_from(self.positions.keys())
+        self.graph.add_edges_from((u, v) for u in self.graph.nodes() for v in self.graph.nodes() if u != v)
 
-        for node in graph.nodes:
-            matrix[node][node] = 0
-
-        weight_matrix = np.random.randint(1, 20, size=(self.size, self.size))
-        matrix = np.multiply(matrix, weight_matrix)
-
-        return nx.from_numpy_matrix(matrix)
-
-    # Defining the function that will plot the graph in matplotlib
-    def plot_graph(self):
-
-        for node, node_attr in self.graph.nodes(data=True):
-            node_attr['size'] = 500
-
-        for u, v, attr in self.graph.edges(data=True):
-            attr["weight"] = int(round(attr["weight"]))
-
-        edge_labels = nx.get_edge_attributes(self.graph, "weight")
-        pos = nx.shell_layout(self.graph)
-        nx.draw_networkx_nodes(self.graph, pos)
-        nx.draw_networkx_edges(self.graph, pos)
-        nx.draw_networkx_edge_labels(self.graph, pos, edge_labels, font_size=8)
-
+        nx.draw(self.graph, pos=self.positions)
+        nx.draw_networkx_edge_labels(self.graph, pos=self.positions)
         self.canvas.draw()
 
-    # Defining the function that will show the graph in the GUI
-    def show_graph(self):
-
-        self.create_canvas()
-
-        if not self.vertex_entry.get().isnumeric() or not int(self.vertex_entry.get()) > 0:
-            # messagebox.showinfo(title="Error", message="Enter a valid number!")
-            self.pop_error("Error", "Introdueix un nombre vàlid!")
-            return
-
-        self.size = int(self.vertex_entry.get())
-
-        self.graph = self.create_graph()
-
-        # We create the figures where the graph will be
-        self.plot_graph()
-
-    def pop_error(self, title, text):
-
-        error = ctk.CTkToplevel(self)
-        x = self.winfo_x()
-        y = self.winfo_y()
-        error.geometry("+%d+%d" % (x+720, y+300))
-        error.overrideredirect(True)
-
-        error_frame = ctk.CTkFrame(error, corner_radius=10, width=200, height=200, bg_color="brown",
-                                   border_width=2)
-        error_frame.grid(column=0, row=0)
-
-        error_frame.columnconfigure(0, weight=1)
-        error_frame.rowconfigure(0, weight=2)
-
-        error.wm_attributes('-transparentcolor', 'brown')
-
-        title_label = ctk.CTkLabel(error_frame, text=title, text_font=("bold helvetica", 25))
-        title_label.grid(column=0, row=0, padx=20, pady=20)
-
-        error_label = ctk.CTkLabel(error_frame, text=text, text_font=("helvetica", 12, "italic"))
-        error_label.grid(column=0, row=1, padx=20, pady=10)
-
-        quit_error = ctk.CTkButton(error_frame, text="D'acord",
-                                   text_color="black", text_font=("helvetica", 12), command=error.destroy)
-        quit_error.grid(column=0, row=2, pady=10)
