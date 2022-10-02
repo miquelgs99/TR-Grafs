@@ -75,7 +75,7 @@ class MapFrame(Main.StdFrame):
                                       corner_radius=8,
                                       text_color="black",
                                       command=self.choose_points)
-        choose_button.grid(row=1, column=2, padx=10, pady=10, sticky="nw")
+        choose_button.grid(row=0, column=0, padx=10, pady=10, sticky="w")
 
         print_graph_button = ctk.CTkButton(self.text_frame,
                                            text='Imprimir graf',
@@ -85,7 +85,17 @@ class MapFrame(Main.StdFrame):
                                            corner_radius=8,
                                            text_color="black",
                                            command=self.print_graph)
-        print_graph_button.grid(row=0, column=2, padx=10, pady=10, sticky="nw")
+        print_graph_button.grid(row=0, column=0, padx=10, pady=10, sticky="nw")
+
+        find_tree_button = ctk.CTkButton(self.text_frame,
+                                           text='simplificar',
+                                           text_font=("helvetica", 12),
+                                           width=120,
+                                           height=32,
+                                           corner_radius=8,
+                                           text_color="black",
+                                           command=self.find_tree)
+        find_tree_button.grid(row=0, column=0, padx=10, pady=10, sticky="ws")
 
         go_to_menu = ctk.CTkButton(bottom_frame,
                                    text="Menú principal",
@@ -113,7 +123,10 @@ class MapFrame(Main.StdFrame):
 
     def print_graph(self):
         if self.mapCanvas:
-            self.mapCanvas.draw_graph()
+            self.mapCanvas.draw_graph(self.mapCanvas.graph.edges())
+
+    def find_tree(self):
+        self.mapCanvas.find_tree()
 
 
 # if __name__ == "__main__":

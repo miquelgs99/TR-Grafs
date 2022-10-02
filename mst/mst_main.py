@@ -4,7 +4,7 @@ import numpy as np
 
 
 def create_graph():
-    size = 10
+    size = 3
 
     graph = nx.random_tree(size)
 
@@ -20,8 +20,6 @@ def create_graph():
 
     matrix = np.multiply(matrix, weight_matrix)
 
-    print(matrix)
-
     return nx.from_numpy_matrix(matrix)
 
 
@@ -29,7 +27,7 @@ graph = create_graph()
 for u, v, attr in graph.edges(data=True):
     attr["weight"] = int(round(attr["weight"]))
 
-pos = nx.spring_layout(graph)
+pos = nx.spring_layout(graph, k=4)
 
 nx.draw_networkx_nodes(graph, pos)
 nx.draw_networkx_labels(graph, pos)
@@ -39,27 +37,26 @@ nx.draw_networkx_edge_labels(graph, pos, edge_labels)
 plt.show()
 plt.clf()
 
-
 sorted_edges = list(graph.edges(data=True))
 
 # Insertion sort
 for i in range(1, len(sorted_edges)):
 
-    key = sorted_edges[i][2]["weight"]
+    key = sorted_edges[i]
     j = i - 1
-    while j >= 0 and key < sorted_edges[j][2]["weight"]:
-        sorted_edges[j + 1][2]["weight"] = sorted_edges[j][2]["weight"]
+    while j >= 0 and key[2]["weight"] < sorted_edges[j][2]["weight"]:
+        sorted_edges[j + 1] = sorted_edges[j]
         j -= 1
-    sorted_edges[j + 1][2]["weight"] = key
+    sorted_edges[j + 1] = key
 
 tree_edges = []
 connected_components = []
 
 for node in graph.nodes():
     connected_components.append([node])
-print(connected_components)
 
 for u, v, attr in sorted_edges:
+
     u_list = 0
     v_list = 0
     for idx, comp in enumerate(connected_components):
@@ -80,6 +77,7 @@ tree_edge_labels = {}
 for key in edge_labels:
     if key in tree_edges:
         tree_edge_labels[key] = edge_labels[key]
+
 nx.draw_networkx_edge_labels(graph, pos, tree_edge_labels)
 plt.show()
 

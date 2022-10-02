@@ -20,6 +20,7 @@ class MapCanvas(ctk.CTkFrame):
         self.positions = {}
         self.unit_distance = 0
         self.scale = 0
+        self.tree_edges = []
 
         self.fig, self.ax = plt.subplots()
         self.ax.imshow(self.image)
@@ -79,7 +80,7 @@ class MapCanvas(ctk.CTkFrame):
             self.canvas.get_tk_widget().unbind("<B1-Motion>", self.fid2)
         self.canvas.get_tk_widget().bind("<Button-1>", self.point_clicked)
 
-    def draw_graph(self):
+    def draw_graph(self, edgelist):
         self.graph.add_nodes_from(self.positions.keys())
         self.graph.add_edges_from((u, v) for u in self.graph.nodes() for v in self.graph.nodes() if u != v)
         for n, p in self.positions.items():
@@ -95,8 +96,59 @@ class MapCanvas(ctk.CTkFrame):
 
             attr["weight"] = int(round((node_dist/self.unit_distance), 2) * int(self.scale))
 
+        nx.draw(self.graph, pos=self.positions, edgelist=edgelist)
         edge_labels = nx.get_edge_attributes(self.graph, "weight")
-        nx.draw(self.graph, pos=self.positions)
-        nx.draw_networkx_edge_labels(self.graph, pos=self.positions, edge_labels=edge_labels)
+
+        if len(self.tree_edges) == 0:
+            nx.draw_networkx_edge_labels(self.graph, pos=self.positions, edge_labels=edge_labels, font_size=8,
+                                         bbox={"boxstyle": "square",
+                                               "color": "white",
+                                               "alpha": 0.8,
+                                               "width": 8,
+                                               "height": 8,
+                                               "pad": 0}
+                                         )
+        else:
+            tree_edge_labels = {}
+            for key in edge_labels:
+                if key in self.tree_edges:
+                    tree_edge_labels[key] = edge_labels[key]
+            nx.draw_networkx_edge_labels(self.graph, self.positions, tree_edge_labels)
+
         self.canvas.draw()
 
+    def find_tree(self):
+
+        sorted_edges = list(self.graph.edges(data=True))
+
+        # Insertion sort
+        for i in range(1, len(sorted_edges)):
+
+            key = sorted_edges[i]
+            j = i - 1
+            while j >= 0 and key[2]["weight"] < sorted_edges[j][2]["weight"]:
+                sorted_edges[j + 1] = sorted_edges[j]
+                j -= 1
+            sorted_edges[j + 1] = key
+
+        connected_components = []
+
+        for node in self.graph.nodes():
+            connected_components.append([node])
+
+        for u, v, attr in sorted_edges:
+            u_list = 0
+            v_list = 0
+            for idx, comp in enumerate(connected_components):
+                if u in comp:
+                    u_list = idx
+                if v in comp:
+                    v_list = idx
+            if u_list != v_list:
+                self.tree_edges.append((u, v))
+                connected_components[u_list] = connected_components[u_list] + connected_components[v_list]
+                connected_components.pop(v_list)
+
+        plt.cla()
+        self.ax.imshow(self.image)
+        self.draw_graph(self.tree_edges)

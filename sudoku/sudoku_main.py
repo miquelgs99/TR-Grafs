@@ -3,7 +3,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 from pprint import pprint
 
-size = 500
+size = 20
 
 
 def create_graph():
@@ -33,18 +33,26 @@ degree = [sum(matrix[i]) for i in range(len(matrix))]
 # initiate the possible color
 colorDict = {}
 for i in range(len(matrix)):
-    colorDict[node[i]] = ["#eb34eb",
-                          "#ADD8E6",
-                          "Red",
-                          "Yellow",
-                          "Green",
-                          "#eba234",
-                          "#5e0000",
-                          "#0008ff",
-                          "#0888ff",
-                          "#ff82ac",
-                          "#0303ff",
-                          "#0303fc"]
+    colorDict[node[i]] = ['#e6194b',
+                          '#3cb44b',
+                          '#ffe119',
+                          '#4363d8',
+                          '#f58231',
+                          '#911eb4',
+                          '#46f0f0',
+                          '#f032e6',
+                          '#bcf60c',
+                          '#fabebe',
+                          '#008080',
+                          '#e6beff',
+                          '#9a6324',
+                          '#fffac8',
+                          '#800000',
+                          '#aaffc3',
+                          '#808000',
+                          '#ffd8b1',
+                          '#000075',
+                          '#808080']
 
 
 # sort the node depends on the degree
@@ -70,9 +78,6 @@ print(degree)
 # The main process
 theSolution = {}
 for n in sorted_node:
-
-
-
     setTheColor = colorDict[n]
     theSolution[n] = setTheColor[0]
     adjacentNode = matrix[t_[n]]

@@ -35,13 +35,13 @@ class SudokuFrame(Main.StdFrame):
 
         Frame.__init__(self, root)
 
-        self.grid(column=0, row=0)
+        self.grid(column=0, row=0, sticky="nswe")
 
         self.create_frame = ttk.Frame(self, width=self.width, height=self.height)
         self.create_grid()
 
     def create_grid(self):
-        self.create_frame.pack(fill=BOTH, expand=1)
+        self.create_frame.grid(row=0, column=0)
 
         self.canvas = Canvas(self.create_frame, width=self.width, height=self.height)
         self.canvas.grid(row=0, column=0, columnspan=self.sudoku_size, rowspan=self.sudoku_size)
