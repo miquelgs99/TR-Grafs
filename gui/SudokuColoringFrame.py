@@ -202,7 +202,7 @@ class SudokuColoringFrame(Main.StdFrame):
         #                                      'bbox': {'alpha': 0}
         #                                      })
 
-        pos = nx.spring_layout(self.graph)
+        pos = nx.spring_layout(self.graph, k=0)
         self.pos = pos
 
         nx.draw_networkx_nodes(self.graph, pos, node_size=250)
@@ -238,9 +238,9 @@ class SudokuColoringFrame(Main.StdFrame):
         degree = [sum(matrix[i]) for i in range(len(matrix))]
 
         # initiate the possible color
-        colordict = {}
+        color_dict = {}
         for i in range(len(matrix)):
-            colordict[node[i]] = ['#e6194b',
+            color_dict[node[i]] = ['#e6194b',
                                   '#3cb44b',
                                   '#ffe119',
                                   '#4363d8',
@@ -279,16 +279,21 @@ class SudokuColoringFrame(Main.StdFrame):
             sorted_node.append(node[idx])
 
         solution = {}
-        for n in sorted_node:
-            set_color = colordict[n]
-            solution[n] = set_color[0]
-            adjacent_node = matrix[t_[n]]
-            for j in range(len(adjacent_node)):
-                if adjacent_node[j] == 1 and (set_color[0] in colordict[node[j]]):
-                    colordict[node[j]].remove(set_color[0])
+
+        for u in sorted_node:
+            p = color_dict[u]
+            for v in sorted_node:
+                if matrix[int(u)][int(v)] == 1 and v in solution:
+                    if solution[v] in p:
+                        p.remove(solution[v])
+            solution[u] = p[0]
+
+        for key in solution.copy().keys():
+            solution[int(key)] = solution.pop(key)
 
         sorted_solution = dict(sorted(solution.items()))
-        for node, color in sorted_solution.items():
+
+        for nodes, color in sorted_solution.items():
             self.colors.append(color)
 
         nx.draw_networkx_nodes(self.graph, self.pos, node_size=250, node_color=self.colors)
