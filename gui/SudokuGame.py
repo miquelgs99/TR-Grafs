@@ -8,7 +8,6 @@ class SudokuGame(object):
         self.sudoku_size = sudoku_size
         self.subgrid_size = int(math.sqrt(self.sudoku_size))
 
-
     def start(self):
         self.current_matrix = []
         for i in range(self.sudoku_size):

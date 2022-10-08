@@ -28,7 +28,7 @@ class MapCanvas(ctk.CTkFrame):
         plt.axis('off')
         self.canvas = FigureCanvasTkAgg(self.fig, master=self)  # A tk.DrawingArea.
         self.canvas.get_tk_widget().grid(sticky="nswe")
-        self.canvas.get_tk_widget().config(width=self.image.width, height=self.image.height)
+        self.canvas.get_tk_widget().config(width=970, height=580)
 
         self.fid1 = self.canvas.get_tk_widget().bind("<Button-1>", self.canvas_clicked)
         self.fid2 = self.canvas.get_tk_widget().bind("<B1-Motion>", self.canvas_dragged)
@@ -40,8 +40,8 @@ class MapCanvas(ctk.CTkFrame):
     @staticmethod
     def get_image(f):
         img = Image.open(f)  # read the image file
-        new_im_w = 500
-        new_im_h = int(img.height / img.width * new_im_w)
+        new_im_w = 970
+        new_im_h = 580
         img = img.resize((new_im_w, new_im_h))  # new width & height
         return img
 
@@ -100,14 +100,11 @@ class MapCanvas(ctk.CTkFrame):
         edge_labels = nx.get_edge_attributes(self.graph, "weight")
 
         if len(self.tree_edges) == 0:
-            nx.draw_networkx_edge_labels(self.graph, pos=self.positions, edge_labels=edge_labels, font_size=8,
-                                         bbox={"boxstyle": "square",
-                                               "color": "white",
-                                               "alpha": 0.8,
-                                               "width": 8,
-                                               "height": 8,
-                                               "pad": 0}
-                                         )
+            # nx.draw_networkx_edge_labels(self.graph, pos=self.positions, edge_labels=edge_labels, font_size=8,
+            #                              bbox={"boxstyle": "square",
+            #                                    "color": "white",
+            #                                    "alpha": 0.8})
+            pass
         else:
             tree_edge_labels = {}
             for key in edge_labels:

@@ -15,7 +15,7 @@ class EnterKeyValue:
         self.last_clicked = timeit.default_timer()
         self.input_value = ""
 
-    def enter_value(self, input_value, ):
+    def enter_value(self, input_value):
         if timeit.default_timer() - self.last_clicked < 0.5:
             self.input_value += str(input_value)
         else:
@@ -24,8 +24,9 @@ class EnterKeyValue:
 
 
 class SudokuFrame(Main.StdFrame):
-    def __init__(self, root, sudoku_size):
-        self.parent = root
+
+    def __init__(self, root, sudoku_size, text_frame):
+        self.text_frame = text_frame
         self.sudoku_size = sudoku_size
         self.set_size(sudoku_size=self.sudoku_size)
         # self.parent.title("Sudoku Frame")
@@ -35,10 +36,16 @@ class SudokuFrame(Main.StdFrame):
 
         Frame.__init__(self, root)
 
-        self.grid(column=0, row=0, sticky="nswe")
+        self.grid(column=0, row=0)
 
-        self.create_frame = ttk.Frame(self, width=self.width, height=self.height)
+        self.create_frame = ttk.Frame(self)
         self.create_grid()
+
+    def erase_buttons(self):
+        self.submit_btn.destroy()
+        self.clear.destroy()
+        self.change_sudoku_size.destroy()
+        self.change_sudoku_size_label.destroy()
 
     def create_grid(self):
         self.create_frame.grid(row=0, column=0)
@@ -56,16 +63,34 @@ class SudokuFrame(Main.StdFrame):
 
         self.draw_grid()
 
-        submit_btn = ttk.Button(self.create_frame, text='Solve', command=self.solve_puzzle)
-        submit_btn.grid(row=1, column=self.sudoku_size)
+        self.change_sudoku_size_label = ctk.CTkLabel(self.text_frame, text="Introdueix la grandària del sudoku:",
+                                                     text_font=("helvetica", 12))
+        self.change_sudoku_size_label.grid(row=0, column=0, padx=10, pady=10)
 
-        clear = ttk.Button(self.create_frame, text='Clear', command=self.clear_frame)
-        clear.grid(row=2, column=self.sudoku_size)
+        self.change_sudoku_size = ctk.CTkEntry(self.text_frame, width=50)
+        self.change_sudoku_size.insert(0, self.sudoku_size)
+        self.change_sudoku_size.bind("<Return>", (lambda event: self.set_sudoku_size(self.change_sudoku_size.get())))
+        self.change_sudoku_size.grid(row=1, column=0, padx=10, pady=10)
 
-        change_sudoku_size = ttk.Entry(self.create_frame, width=6)
-        change_sudoku_size.insert(0, self.sudoku_size)
-        change_sudoku_size.bind("<Return>", (lambda event: self.set_sudoku_size(change_sudoku_size.get())))
-        change_sudoku_size.grid(row=3, column=self.sudoku_size)
+        self.submit_btn = ctk.CTkButton(self.text_frame,
+                                        text='Resoldre sudoku',
+                                        text_font=("helvetica", 12),
+                                        width=120,
+                                        height=32,
+                                        corner_radius=8,
+                                        text_color="black",
+                                        command=self.solve_puzzle)
+        self.submit_btn.grid(row=2, column=0, padx=10, pady=10)
+
+        self.clear = ctk.CTkButton(self.text_frame,
+                                   text='Borrar',
+                                   text_font=("helvetica", 12),
+                                   width=120,
+                                   height=32,
+                                   corner_radius=8,
+                                   text_color="black",
+                                   command=self.clear_frame)
+        self.clear.grid(row=3, column=0, padx=10, pady=10)
 
     def set_sudoku_size(self, size):
         size = int(size)
@@ -155,7 +180,7 @@ class SudokuFrame(Main.StdFrame):
             self.update_grid()
             self.draw_cursor()
         elif self.row >= 0 and self.col >= 0 and event.char.isnumeric() and int(event.char) in list(
-                range(0, self.sudoku_size)):
+                range(0, self.sudoku_size+1)):
             self.entry_key_value.enter_value(event.char)
             if not self.game.is_valid(int(self.entry_key_value.input_value), self.row, self.col):
                 tkMessageBox.showerror('Sudoku invàlid!',

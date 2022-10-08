@@ -19,43 +19,30 @@ class SudokuColoringFrame(Main.StdFrame):
     def __init__(self):
         Main.StdFrame.__init__(self)
 
-        # self.configure(width=1180, height=710)
         self.grid(sticky="nswe")
-        self.columnconfigure(0, weight=1)
-        self.columnconfigure(1, weight=1)
-        self.rowconfigure(0, weight=2)
-        self.rowconfigure(1, weight=1)
-        self.rowconfigure(2, weight=2)
 
         self.size = 0
         self.colors = []
         self.graph = nx.Graph()
         self.pos = None
 
-        text_frame = ctk.CTkFrame(self, corner_radius=0)
-        text_frame.grid(column=0, row=0, sticky="nsw", rowspan=3)
+        self.text_frame = ctk.CTkFrame(self, corner_radius=0)
+        self.text_frame.grid(column=0, row=0, sticky="nsw", rowspan=3)
 
         top_text_frame = ctk.CTkFrame(self)
         top_text_frame.grid(column=1, row=0, padx=10, pady=10)
 
-        self.sudoku_frame = SudokuFrame.SudokuFrame(self, 9)
-        self.sudoku_frame.grid(column=1, row=1, sticky="nswe")
         self.coloring_frame = ctk.CTkFrame(self)
-        self.coloring_frame.grid(column=1, row=1, padx=10, pady=10)
+        self.coloring_frame.grid(column=1, row=1, padx=20, sticky="nswe")
 
         nav_frame = ctk.CTkFrame(self)
-        nav_frame.grid(column=1, row=2, padx=20, pady=20, sticky="E")
+        nav_frame.grid(column=1, row=2, padx=20, pady=10, sticky="we")
+        nav_frame.columnconfigure(0, weight=1)
+        nav_frame.columnconfigure(1, weight=1)
 
         self.create_canvas()
 
-        # region We create the entry text box
-
-        vertex_label = ctk.CTkLabel(text_frame, text="Quants vèrtexs tindrà el graf?", text_font=("helvetica", 12))
-        vertex_label.grid(column=0, row=0, padx=10, pady=10)
-
-        self.vertex_entry = ctk.CTkEntry(text_frame, width=50)
-        self.vertex_entry.grid(column=0, row=1, padx=10, pady=10)
-        # endregion
+        self.create_buttons()
 
         self.which_frame = "Coloring"
 
@@ -67,12 +54,12 @@ class SudokuColoringFrame(Main.StdFrame):
                                         fg_color="#383838",
                                         hover=False,
                                         command=(lambda: self.change_to("left")))
-        self.left_label.grid(column=0, row=0, padx=20, pady=20)
+        self.left_label.grid(column=0, row=0, padx=20)
 
         self.mid_label = ctk.CTkLabel(top_text_frame,
                                       text='Coloring',
                                       text_font=('Segoe UI', 20))
-        self.mid_label.grid(column=1, row=0, padx=20)
+        self.mid_label.grid(column=1, row=0, padx=20, pady=10)
 
         self.right_label = ctk.CTkButton(top_text_frame,
                                          text='Sudoku',
@@ -83,44 +70,6 @@ class SudokuColoringFrame(Main.StdFrame):
                                          command=(lambda: self.change_to("right")))
         self.right_label.grid(column=2, row=0, padx=20)
 
-        # region Creating the buttons
-
-        # We create the button that will generate the graph, and we assign the previous function made to it
-        generate_button = ctk.CTkButton(text_frame,
-                                        text="Generate!",
-                                        text_font=("helvetica", 12),
-                                        width=120,
-                                        height=32,
-                                        corner_radius=8,
-                                        text_color="black",
-                                        command=self.show_graph)
-        generate_button.grid(column=0, row=2, padx=10, pady=10)
-
-        color_button = ctk.CTkButton(text_frame,
-                                        text="Color!",
-                                        text_font=("helvetica", 12),
-                                        width=120,
-                                        height=32,
-                                        corner_radius=8,
-                                        text_color="black",
-                                        command=self.color_graph)
-        color_button.grid(column=0, row=3, padx=10, pady=10)
-
-        # We create the button that will create the random number, and we assign the previous function made to it
-        random_button = ctk.CTkButton(text_frame,
-                                      text="Random number!",
-                                      text_font=("helvetica", 12),
-                                      width=120,
-                                      height=32,
-                                      corner_radius=8,
-                                      text_color="black",
-                                      command=lambda: [self.vertex_entry.delete(0, END),  # Deletes the current value
-                                                    self.vertex_entry.insert(
-                                                        0, np.random.randint(3, 20)
-                                                    )  # Insert new value
-                                                    ])
-        random_button.grid(column=0, row=4, padx=10, pady=10)
-
         nav_button1 = ctk.CTkButton(nav_frame,
                                     text="MenuFrame",
                                     width=120,
@@ -128,7 +77,7 @@ class SudokuColoringFrame(Main.StdFrame):
                                     corner_radius=8,
                                     text_color="black",
                                     command=lambda: self.new_window(MenuFrame.MenuFrame))
-        nav_button1.grid(row=0, column=0, padx=10, pady=10)
+        nav_button1.grid(row=0, column=1, padx=10, pady=10, sticky="e")
 
         # endregion
 
@@ -140,6 +89,9 @@ class SudokuColoringFrame(Main.StdFrame):
             self.right_label.configure(text_color="#383838")
             self.which_frame = "Sudoku"
 
+            self.erase_buttons()
+            self.sudoku_frame = SudokuFrame.SudokuFrame(self, 9, self.text_frame)
+            self.sudoku_frame.grid(column=1, row=1)
             self.sudoku_frame.tkraise()
 
         elif self.which_frame == "Sudoku" and btn == "left":
@@ -148,7 +100,60 @@ class SudokuColoringFrame(Main.StdFrame):
             self.right_label.configure(text_color="white")
             self.which_frame = "Coloring"
 
+            self.sudoku_frame.erase_buttons()
+            self.create_buttons()
             self.coloring_frame.tkraise()
+
+    def erase_buttons(self):
+        self.generate_button.destroy()
+        self.color_button.destroy()
+        self.random_button.destroy()
+        self.vertex_label.destroy()
+        self.vertex_entry.destroy()
+
+    def create_buttons(self):
+
+        self.vertex_label = ctk.CTkLabel(self.text_frame, text="Quants vèrtexs tindrà el graf?",
+                                         text_font=("helvetica", 12))
+        self.vertex_label.grid(column=0, row=0, padx=10, pady=10)
+
+        self.vertex_entry = ctk.CTkEntry(self.text_frame, width=50)
+        self.vertex_entry.grid(column=0, row=1, padx=10, pady=10)
+
+        self.generate_button = ctk.CTkButton(self.text_frame,
+                                             text="Generate!",
+                                             text_font=("helvetica", 12),
+                                             width=120,
+                                             height=32,
+                                             corner_radius=8,
+                                             text_color="black",
+                                             command=self.show_graph)
+        self.generate_button.grid(column=0, row=2, padx=10, pady=10)
+
+        self.color_button = ctk.CTkButton(self.text_frame,
+                                          text="Color!",
+                                          text_font=("helvetica", 12),
+                                          width=120,
+                                          height=32,
+                                          corner_radius=8,
+                                          text_color="black",
+                                          command=self.color_graph)
+        self.color_button.grid(column=0, row=3, padx=10, pady=10)
+
+        self.random_button = ctk.CTkButton(self.text_frame,
+                                           text="Random number!",
+                                           text_font=("helvetica", 12),
+                                           width=120,
+                                           height=32,
+                                           corner_radius=8,
+                                           text_color="black",
+                                           command=lambda: [self.vertex_entry.delete(0, END),
+                                                            # Deletes the current value
+                                                            self.vertex_entry.insert(
+                                                                0, np.random.randint(3, 20)
+                                                            )  # Insert new value
+                                                            ])
+        self.random_button.grid(column=0, row=4, padx=10, pady=10)
 
     def create_canvas(self):
         """
@@ -161,8 +166,8 @@ class SudokuColoringFrame(Main.StdFrame):
             pass
 
         self.fig, self.ax = plt.subplots()
-        self.fig.set_figheight(5.5)
-        self.fig.set_figwidth(9.75)
+        self.fig.set_figheight(5)
+        self.fig.set_figwidth(9)
         plt.axis('off')
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.coloring_frame)  # A tk.DrawingArea.
         self.canvas.get_tk_widget().grid(column=0, row=0, padx=20, pady=20)
