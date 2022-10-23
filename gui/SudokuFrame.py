@@ -208,16 +208,14 @@ class SudokuFrame(Main.StdFrame):
 
     def solve_puzzle(self):
         self.row, self.col = -1, -1
-        if self.game.solve():
-            self.update_grid()
-        else:
-            tkMessageBox.showerror('No solution!',
-                                   'No s\'ha trobat solució',
-                                   parent=self.canvas)
+        try:
+           self.game.solve()
+           self.update_grid()
+        except KeyError:
+            self.pop_error('Error', 'L\'algorisme no ha pogut trobar una solució \n vàlida pel sudoku.')
 
 
 if __name__ == "__main__":
     root = Tk()
     SudokuFrame(root, 9)
-
     root.mainloop()

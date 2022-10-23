@@ -12,6 +12,7 @@ import Main
 import GraphFrame
 import MenuFrame
 import SudokuFrame
+from pprint import pprint
 
 
 class SudokuColoringFrame(Main.StdFrame):
@@ -47,7 +48,7 @@ class SudokuColoringFrame(Main.StdFrame):
         self.which_frame = "Coloring"
 
         self.left_label = ctk.CTkButton(top_text_frame,
-                                        text='Coloring',
+                                        text='Coloració',
                                         text_font=('Segoe UI', 15),
                                         text_color="#383838",
                                         bg_color="#383838",
@@ -57,7 +58,7 @@ class SudokuColoringFrame(Main.StdFrame):
         self.left_label.grid(column=0, row=0, padx=20)
 
         self.mid_label = ctk.CTkLabel(top_text_frame,
-                                      text='Coloring',
+                                      text='Coloració',
                                       text_font=('Segoe UI', 20))
         self.mid_label.grid(column=1, row=0, padx=20, pady=10)
 
@@ -71,7 +72,7 @@ class SudokuColoringFrame(Main.StdFrame):
         self.right_label.grid(column=2, row=0, padx=20)
 
         nav_button1 = ctk.CTkButton(nav_frame,
-                                    text="MenuFrame",
+                                    text="Menú principal",
                                     width=120,
                                     height=32,
                                     corner_radius=8,
@@ -90,13 +91,14 @@ class SudokuColoringFrame(Main.StdFrame):
             self.which_frame = "Sudoku"
 
             self.erase_buttons()
+            self.create_canvas()
             self.sudoku_frame = SudokuFrame.SudokuFrame(self, 9, self.text_frame)
             self.sudoku_frame.grid(column=1, row=1)
             self.sudoku_frame.tkraise()
 
         elif self.which_frame == "Sudoku" and btn == "left":
             self.left_label.configure(text_color="#383838")
-            self.mid_label.configure(text='Coloring')
+            self.mid_label.configure(text='Coloració')
             self.right_label.configure(text_color="white")
             self.which_frame = "Coloring"
 
@@ -121,7 +123,7 @@ class SudokuColoringFrame(Main.StdFrame):
         self.vertex_entry.grid(column=0, row=1, padx=10, pady=10)
 
         self.generate_button = ctk.CTkButton(self.text_frame,
-                                             text="Generate!",
+                                             text="Generar graf!",
                                              text_font=("helvetica", 12),
                                              width=120,
                                              height=32,
@@ -131,7 +133,7 @@ class SudokuColoringFrame(Main.StdFrame):
         self.generate_button.grid(column=0, row=2, padx=10, pady=10)
 
         self.color_button = ctk.CTkButton(self.text_frame,
-                                          text="Color!",
+                                          text="Pintar graf!",
                                           text_font=("helvetica", 12),
                                           width=120,
                                           height=32,
@@ -141,7 +143,7 @@ class SudokuColoringFrame(Main.StdFrame):
         self.color_button.grid(column=0, row=3, padx=10, pady=10)
 
         self.random_button = ctk.CTkButton(self.text_frame,
-                                           text="Random number!",
+                                           text="Nombre aleatori!",
                                            text_font=("helvetica", 12),
                                            width=120,
                                            height=32,
@@ -202,7 +204,7 @@ class SudokuColoringFrame(Main.StdFrame):
         #                                      'bbox': {'alpha': 0}
         #                                      })
 
-        pos = nx.spring_layout(self.graph, k=0)
+        pos = nx.spring_layout(self.graph)
         self.pos = pos
 
         nx.draw_networkx_nodes(self.graph, pos, node_size=250)
@@ -241,25 +243,25 @@ class SudokuColoringFrame(Main.StdFrame):
         color_dict = {}
         for i in range(len(matrix)):
             color_dict[node[i]] = ['#e6194b',
-                                  '#3cb44b',
-                                  '#ffe119',
-                                  '#4363d8',
-                                  '#f58231',
-                                  '#911eb4',
-                                  '#46f0f0',
-                                  '#f032e6',
-                                  '#bcf60c',
-                                  '#fabebe',
-                                  '#008080',
-                                  '#e6beff',
-                                  '#9a6324',
-                                  '#fffac8',
-                                  '#800000',
-                                  '#aaffc3',
-                                  '#808000',
-                                  '#ffd8b1',
-                                  '#000075',
-                                  '#808080']
+                                   '#3cb44b',
+                                   '#ffe119',
+                                   '#4363d8',
+                                   '#f58231',
+                                   '#911eb4',
+                                   '#46f0f0',
+                                   '#f032e6',
+                                   '#bcf60c',
+                                   '#fabebe',
+                                   '#008080',
+                                   '#e6beff',
+                                   '#9a6324',
+                                   '#fffac8',
+                                   '#800000',
+                                   '#aaffc3',
+                                   '#808000',
+                                   '#ffd8b1',
+                                   '#000075',
+                                   '#808080']
 
         # sort the node depends on the degree
 

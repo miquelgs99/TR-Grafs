@@ -196,7 +196,7 @@ class GraphFrame(Main.StdFrame):
         graph = nx.random_tree(self.size)
 
         for node in graph.nodes:
-            # graph.add_edge(node, np.random.randint(self.size - node - 1, self.size))
+
             if 1 < node < (len(graph.nodes)-1):
                 graph.add_edge(node, np.random.randint(node-2, node+2))
             else:

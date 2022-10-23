@@ -84,6 +84,7 @@ for u in sorted_node:
                 p.remove(solution[v])
     solution[u] = p[0]
 
+print(solution)
 G = nx.from_numpy_matrix(matrix)
 
 for key in solution.copy().keys():

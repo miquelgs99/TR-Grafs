@@ -77,10 +77,8 @@ class StdFrame(ctk.CTkFrame):
 
     def pop_error(self, title, text):
 
-        error = ctk.CTkToplevel(self)
-        x = self.winfo_x()
-        y = self.winfo_y()
-        error.geometry("+%d+%d" % (x+720, y+300))
+        error = ctk.CTkToplevel()
+        error.geometry("+%d+%d" % (860, 440))
         error.overrideredirect(True)
 
         error_frame = ctk.CTkFrame(error, corner_radius=10, width=200, height=200, bg_color="white",

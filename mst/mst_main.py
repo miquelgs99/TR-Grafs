@@ -2,14 +2,18 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
 
+seed = 16
+
+np.random.seed(8)
 
 def create_graph():
-    size = 3
+    size = 6
 
-    graph = nx.random_tree(size)
+    graph = nx.random_tree(size, seed=seed)
 
     for node in graph.nodes:
         graph.add_edge(node, np.random.randint(size-node-1, size))
+        graph.add_edge(node, np.random.randint(size - node - 1, size))
 
     matrix = nx.to_numpy_array(graph)
 
@@ -27,13 +31,13 @@ graph = create_graph()
 for u, v, attr in graph.edges(data=True):
     attr["weight"] = int(round(attr["weight"]))
 
-pos = nx.spring_layout(graph, k=4)
+pos = nx.spring_layout(graph, seed=seed)
 
-nx.draw_networkx_nodes(graph, pos)
-nx.draw_networkx_labels(graph, pos)
-nx.draw_networkx_edges(graph, pos)
+nx.draw_networkx_nodes(graph, pos, node_size=1100)
+nx.draw_networkx_labels(graph, pos, labels={n: n+1 for n in graph}, font_size=15)
+nx.draw_networkx_edges(graph, pos, width=5, alpha=0.8)
 edge_labels = nx.get_edge_attributes(graph, "weight")
-nx.draw_networkx_edge_labels(graph, pos, edge_labels)
+nx.draw_networkx_edge_labels(graph, pos, edge_labels, font_size=12)
 plt.show()
 plt.clf()
 
@@ -69,16 +73,16 @@ for u, v, attr in sorted_edges:
         connected_components[u_list] = connected_components[u_list] + connected_components[v_list]
         connected_components.pop(v_list)
 
-nx.draw_networkx_nodes(graph, pos)
-nx.draw_networkx_labels(graph, pos)
-nx.draw_networkx_edges(graph, pos, edgelist=tree_edges)
+nx.draw_networkx_nodes(graph, pos, node_size=1100)
+nx.draw_networkx_labels(graph, pos, labels={n: n+1 for n in graph}, font_size=15)
+nx.draw_networkx_edges(graph, pos, edgelist=tree_edges, width=5, alpha=0.8)
 tree_edge_labels = {}
 
 for key in edge_labels:
     if key in tree_edges:
         tree_edge_labels[key] = edge_labels[key]
 
-nx.draw_networkx_edge_labels(graph, pos, tree_edge_labels)
+nx.draw_networkx_edge_labels(graph, pos, tree_edge_labels, font_size=12)
 plt.show()
 
 
