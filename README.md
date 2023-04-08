@@ -1,7 +1,7 @@
 # TR-Grafs
-Aquest repositori és per guardar els codis que he utilitzat al meu treball de recerca de batxillerat. L'objectiu és poder comparar diferents aplicacions dels grafs a la vida real i veure com els algorismes ens ajuden a fer-ho, mitjançant la programació amb Python.
+Aquest repositori és per guardar els codis que he utilitzat al meu treball de recerca de batxillerat anomenat "Els grafs a la vida real: problemes i algorismes amb Python". L'objectiu és poder comparar diferents aplicacions dels grafs a la vida real i veure com els algorismes ens ajuden a fer-ho, mitjançant la programació amb Python.
 
-Per poder utilitzar el programa s'ha d'instal·lar el Python 3.10 i una IDE, com PyCharm. A més, s'han d'instal·lar també totes les dependències següents:
+Per poder utilitzar el programa s'ha d'instal·lar el Python 3.10 i una IDE, com PyCharm. A més, s'han d'instal·lar totes les dependències següents:
 
     - Networkx: https://networkx.org/documentation/stable/install.html
     - Math: (ve de sèrie amb Python 3.10)
