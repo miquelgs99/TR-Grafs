@@ -16,6 +16,7 @@ Per poder utilitzar el programa s'ha d'instal·lar el Python 3.10 i una IDE, com
     - PIL: https://pypi.org/project/Pillow/
     
 Per instal·lar les dependències ràpidament, un cop descarregat el programa i posats tots els seus arxius a una carpeta conjunta, s'ha d'executar la següent instrucció a la consola de la carpeta on és el projecte:
+
     - pip3 install -r requirements.txt
     
 Per executar el codi, s'ha d'obrir l'arxiu "main.py". Si hi ha problemes amb la instal·lació o l'execució del programa, adjunto aqui un video on es mostra la versió final i les diferents interaccions que es poden fer amb ell.
